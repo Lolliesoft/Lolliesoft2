@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.36105.23 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "lolliesoft2.client", "lolliesoft2.client\lolliesoft2.client.esproj", "{AB66B062-11A9-6F5C-485F-24761AC42AFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lolliesoft2.Server", "Lolliesoft2.Server\Lolliesoft2.Server.csproj", "{140891A6-4F48-4250-8410-3B64D88ED6E1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB66B062-11A9-6F5C-485F-24761AC42AFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB66B062-11A9-6F5C-485F-24761AC42AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB66B062-11A9-6F5C-485F-24761AC42AFB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AB66B062-11A9-6F5C-485F-24761AC42AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB66B062-11A9-6F5C-485F-24761AC42AFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB66B062-11A9-6F5C-485F-24761AC42AFB}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{140891A6-4F48-4250-8410-3B64D88ED6E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{140891A6-4F48-4250-8410-3B64D88ED6E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{140891A6-4F48-4250-8410-3B64D88ED6E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{140891A6-4F48-4250-8410-3B64D88ED6E1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EE46D4C6-2F11-4287-BA87-470714A0CA7E}
+	EndGlobalSection
+EndGlobal
