@@ -67,19 +67,20 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "lolliesoft2.client:build:development",
+            "proxyConfig": "proxy.conf.json",
+            "port": 52062
+          },
           "configurations": {
             "production": {
-              "buildTarget": "lolliesoft2.client:build:production"
+              "browserTarget": "lolliesoft2.client:build:production"
             },
             "development": {
-              "buildTarget": "lolliesoft2.client:build:development"
+              "browserTarget": "lolliesoft2.client:build:development"
             }
           },
-          "defaultConfiguration": "development",
-          "options": {
-            "proxyConfig": "src/proxy.conf.js",
-            "port": 52062
-          }
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"
