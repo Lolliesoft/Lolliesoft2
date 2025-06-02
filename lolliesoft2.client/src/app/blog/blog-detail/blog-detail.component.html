@@ -1,9 +1,25 @@
-<div *ngIf="post; else loading">
-  <h1>{{ post.title }}</h1>
-  <img *ngIf="post.imagePath" [src]="post.imagePath" [alt]="post.title" />
-  <div [innerHTML]="post.content"></div>
-  <p><em>Published: {{ post.created | date:'medium' }}</em></p>
-</div>
+<ng-container *ngIf="post; else loading">
+  <div class="blog-detail">
+    <h1>{{ post.title }}</h1>
+
+    <div class="detail-image" *ngIf="post.imagePath">
+      <img [src]="'https://localhost:44309' + post.imagePath"
+           [alt]="post.title" />
+    </div>
+
+    <div class="content" [innerHTML]="post.content"></div>
+
+    <p class="meta">
+      <em>
+        Published: {{ post.created | date:'medium' }}
+        <span *ngIf="post.updated">
+          (Updated: {{ post.updated | date:'medium' }})
+        </span>
+      </em>
+    </p>
+  </div>
+</ng-container>
+
 <ng-template #loading>
   <p>Loading post…</p>
 </ng-template>

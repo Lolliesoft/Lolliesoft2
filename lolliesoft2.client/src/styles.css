@@ -1,1 +1,588 @@
-/* You can add global styles to this file, and also import other style files */
+/* Load StrictThemes from your assets */
+@font-face {
+  font-family: 'StrictThemes';
+  src: url('/fonts/StrictThemes.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Base colors */
+  --bg-color: #ebebeb; /* page background */
+  --text-color: #2c3e50; /* primary text */
+  --header-bg: #5b4141; /* top bar */
+  --header-text: #ecf0f1; /* nav text */
+  --header-color: #494158; /* bright red accent */
+  --accent-hover: #c0392b; /* darker red hover */
+  --card-bg: #ffffff; /* card background */
+  --card-border: #ecf0f1; /* light border */
+  --button-bg: var(--accent);
+  --button-hover: var(--accent-hover);
+  --heading-color: #494158; /* headings */
+  --font-strict: 'StrictThemes', sans-serif;
+  --text-hover-color: #77BB66; /* your hover color */
+}
+
+body {
+  margin: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-strict);
+  line-height: 1.6;
+  font-size: 24px;
+}
+
+.nav-menu a {
+  font-size: 15px;
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* Headings & Link Hover Coloring                        */
+/*─────────────────────────────────────────────────────────*/
+h1, h2, h3, h4, h5, h6,
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+  color: var(--heading-color);
+  font-family: var(--font-strict);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+  a:hover {
+    color: var(--accent-hover) !important;
+  }
+
+h1:hover,
+h2:hover,
+h3:hover,
+h4:hover,
+h5:hover,
+h6:hover,
+span:hover {
+  color: var(--text-hover-color) !important;
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* Header (Top Navigation)                                */
+/*─────────────────────────────────────────────────────────*/
+/*
+  We remove the left/right padding from .site-header
+  so that .container inside it can handle the gutters.
+*/
+.site-header {
+  background: var(--header-bg);
+  color: var(--header-text);
+  display: flex;
+  justify-content: center; /* centers the inner .container */
+  align-items: center;
+  padding: 1rem 0; /* only vertical padding, no horizontal */
+}
+
+  /* Inside the nav, .container now handles horizontal centering/gutters */
+  .site-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Link coloring inside top nav */
+  .site-header .nav-menu a {
+    color: var(--header-text);
+    margin-right: 1rem;
+    font-weight: 600;
+  }
+
+    .site-header .nav-menu a:hover {
+      color: var(--accent);
+    }
+
+/*─────────────────────────────────────────────────────────*/
+/* Buttons                                               */
+/*─────────────────────────────────────────────────────────*/
+button, .btn {
+  background: var(--button-bg);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+  font-family: var(--font-strict);
+}
+
+  button:hover, .btn:hover {
+    background: var(--button-hover);
+  }
+
+/*─────────────────────────────────────────────────────────*/
+/* Blog Cards                                            */
+/*─────────────────────────────────────────────────────────*/
+.blog-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.blog-item {
+  width: 640px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.blog-image {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 ratio */
+  overflow: hidden;
+}
+
+  .blog-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+.blog-item h2 {
+  margin: 1rem;
+  font-size: 1.5rem;
+}
+
+.blog-item .excerpt {
+  margin: 0 1rem 1rem;
+  color: #555;
+}
+
+.blog-item .read-more {
+  display: inline-block;
+  margin: 0 1rem 1rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* Blog Detail                                           */
+/*─────────────────────────────────────────────────────────*/
+.blog-detail {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.detail-image {
+  position: relative;
+  width: 100%;
+  max-height: 400px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+  .detail-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+/*─────────────────────────────────────────────────────────*/
+/* Dark-mode support                                     */
+/*─────────────────────────────────────────────────────────*/
+[data-theme="dark"] {
+  --bg-color: #1e1e1e;
+  --text-color: #ecf0f1;
+  --header-bg: #1a252f;
+  --header-text: #ecf0f1;
+  --card-bg: #32414a;
+  --card-border: #1a252f;
+  --accent: #e74c3c;
+  --accent-hover: #c0392b;
+  --button-bg: var(--accent);
+  --button-hover: var(--accent-hover);
+  --heading-color: #c0c0c0;
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* Global “container” for centering content and giving a max‐width */
+/*─────────────────────────────────────────────────────────*/
+.container {
+  width: 100%; /* fill 100% of parent (viewport or parent element) */
+  max-width: 1400px; /* cap at 1200px (adjust as needed) */
+  margin: 0 auto; /* center when viewport > max-width */
+  padding: 0 1.5rem; /* left/right gutters (24px if 16px = 1rem) */
+  box-sizing: border-box;
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* Second bar (Social icons only)                         */
+/*─────────────────────────────────────────────────────────*/
+
+/* 1) Outer second bar: full-width green background, fixed 36px height */
+#header-layout-2 {
+  background-color: #77BB66;
+  height: 36px;
+  /* use your card‐border variable (which becomes dark in dark mode) */
+  border-bottom: 1px solid var(--card-border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+
+/* 2) Make header-holder-2 the flex container and positioning context */
+#header-holder-2 {
+  display: flex;
+  align-items: center; /* vertical centering inside 36px bar */
+  width: 100%;
+  max-width: 1400px; /* match your .container max-width */
+  margin: 0 auto; /* center on large screens */
+  position: relative; /* .icons-social can be absolute relative to this */
+  padding: 0 1.5rem; /* left/right gutter for icons */
+}
+
+/* 3) Absolutely position the icons under the left gutter */
+.icons-social {
+  position: absolute;
+  left: 1.5rem; /* exactly the same as header-holder-2’s left padding */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 0.75rem; /* small gap between each icon */
+}
+
+  /* 4) Each social link is a 24×24px box, centered vertically */
+  .icons-social a {
+    display: inline-block;
+    width: 24px !important;
+    height: 24px !important;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+    text-indent: -9999px; /* hide link text */
+    overflow: hidden;
+  }
+
+    /* 4b) Point to your SVGs */
+    .icons-social a#icon-Facebook {
+      background-image: url('/images/facebook.svg');
+    }
+
+    .icons-social a#icon-GitHub {
+      background-image: url('/images/github.svg');
+    }
+
+    .icons-social a#icon-Twitter {
+      background-image: url('/images/x.svg');
+    }
+
+    .icons-social a#icon-RSS {
+      background-image: url('/images/rss.svg');
+    }
+
+    .icons-social a#icon-Instagram {
+      background-image: url('/images/instagram.svg');
+    }
+
+    .icons-social a#icon-SoundCloud {
+      background-image: url('/images/soundcloud.svg');
+    }
+
+    .icons-social a#icon-YouTube {
+      background-image: url('/images/youtube.svg');
+    }
+
+    /* 4c) Hover effect on social icons */
+    .icons-social a:hover {
+      opacity: 0.75;
+    }
+
+/* 5) Clearfix (if you still need it elsewhere) */
+.clear {
+  clear: both;
+}
+
+/* 6) On very narrow screens, keep them under the same gutter */
+@media (max-width: 600px) {
+  .icons-social {
+    left: 1.5rem; /* maintain gutter alignment on small screens */
+  }
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* In dark mode, remove the line under header-layout-2    */
+/*─────────────────────────────────────────────────────────*/
+[data-theme="dark"] #header-layout-2 {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* Widget wrapper                                         */
+/*─────────────────────────────────────────────────────────*/
+.youtube-widget {
+  margin-bottom: 1.5rem; /* space below the widget */
+}
+
+  /* Center or style the heading if you like */
+  .youtube-widget h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+    color: var(--heading-color);
+  }
+
+  /* Make the iframe fill its parent’s width and maintain 16:9 */
+  .youtube-widget iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    display: block;
+  }
+
+.about-widget {
+  background-color: transparent;
+  padding: 1rem;
+  text-align: left;
+}
+
+  .about-widget h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  .about-widget p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+.latest-articles-widget {
+  background-color: transparent; 
+  padding: 1rem;
+  text-align: left;
+}
+
+  .latest-articles-widget h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  .latest-articles-widget ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .latest-articles-widget li + li {
+    margin-top: 0.5rem;
+  }
+
+  .latest-articles-widget a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+    .latest-articles-widget a:hover {
+      text-decoration: underline;
+    }
+/*─────────────────────────────────────────────────────────*/
+/* content-flex: two-column layout inside #content-box   */
+/*─────────────────────────────────────────────────────────*/
+#content-box {
+  /* optional: ensure #content-box does not collapse */
+  width: 100%;
+}
+
+.content-flex {
+  display: flex;
+  gap: 1.5rem; /* space between sidebar and blog list */
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* 33%-wide sidebar for widgets                            */
+/*─────────────────────────────────────────────────────────*/
+.sidebar {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* space between multiple widgets */
+}
+
+  .sidebar .youtube-widget {
+    /* reuse the styles from earlier */
+    margin-bottom: 0; /* no extra bottom margin if only one widget */
+  }
+
+.youtube-widget h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  color: var(--heading-color);
+}
+
+.youtube-widget iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+  display: block;
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* 66%-wide blog-list (fill remaining space)               */
+/*─────────────────────────────────────────────────────────*/
+.blog-list {
+  width: 66%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* ensure each .blog-item fills 100% of 66% */
+  gap: 1.5rem;
+  padding: 1.5rem 0; /* top/bottom padding; remove left/right so it’s flush */
+}
+
+/* Adjust each card to take full width of .blog-list */
+.blog-item {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.blog-image {
+  width: 100%;
+  position: relative;
+  padding-top: 56.25%; /* 16:9 ratio */
+}
+
+  .blog-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+/*─────────────────────────────────────────────────────────*/
+/* Responsive: stack sidebar below blog-list on narrow    */
+/*─────────────────────────────────────────────────────────*/
+@media (max-width: 800px) {
+  .content-flex {
+    flex-direction: column;
+  }
+
+  .sidebar,
+  .blog-list {
+    width: 100%; /* each takes full width on small screens */
+  }
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* Widget box styling                                      */
+/*─────────────────────────────────────────────────────────*/
+.widget {
+  background-color: var(--bg-color);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Ensure the iframes still fill the widget */
+.youtube-widget iframe,
+.soundcloud-widget iframe {
+  width: 100%;
+  display: block;
+  border: none;
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* Theme Switch Slider                                      */
+/*─────────────────────────────────────────────────────────*/
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  margin: 0 1rem; /* adjust horizontal spacing as needed */
+}
+
+  .theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  /* The slider “track” */
+  .theme-switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--text-color); /* darker track so knob shows */
+    border-radius: 26px;
+    transition: background-color 0.3s;
+  }
+
+    /* The “knob” inside the track */
+    .theme-switch .slider::before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--bg-color); /* light knob for contrast */
+      border-radius: 50%;
+      transition: transform 0.3s, background-color 0.3s;
+    }
+
+  /* When checked, change track color and move knob to the right */
+  .theme-switch input:checked + .slider {
+    background-color: var(--header-bg);
+  }
+
+    .theme-switch input:checked + .slider::before {
+      transform: translateX(24px);
+      background-color: var(--bg-color);
+    }
+
+  /* Optional: focus styles for accessibility */
+  .theme-switch input:focus + .slider {
+    box-shadow: 0 0 2px var(--accent);
+  }
+
+/* Ensure correct colors in dark mode */
+[data-theme="dark"] .theme-switch .slider {
+  background-color: var(--card-border);
+}
+
+  [data-theme="dark"] .theme-switch .slider::before {
+    background-color: var(--header-text);
+  }
+
+[data-theme="dark"] .theme-switch input:checked + .slider {
+  background-color: var(--header-color);
+}
+
+  [data-theme="dark"] .theme-switch input:checked + .slider::before {
+    background-color: var(--header-text);
+  }

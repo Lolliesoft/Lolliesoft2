@@ -1,0 +1,67 @@
+<!-- src/app/shared/header/header.component.html -->
+<!-- Wrap both the top nav and the second bar in a shared container -->
+<div class="container">
+  <!-- 1. Top navigation bar -->
+  <nav class="site-header">
+    <!-- Logo on the left -->
+    <a class="logo-link" routerLink="/">
+      <img src="/images/logo.png" alt="My Site Logo" class="logo-img" />
+    </a>
+
+    <!-- Navigation links -->
+    <ul class="nav-menu">
+      <li><a routerLink="/blog">BLOG</a></li>
+      <li><a routerLink="/admin/blog">ADMIN</a></li>
+    </ul>
+
+   <!-- Dark‐mode slider on the right -->
+  <label class="theme-switch" title="Toggle light/dark mode">
+    <input type="checkbox" id="theme-toggle" />
+    <span class="slider"></span>
+  </label>
+</nav>
+
+  <!-- 2. Second bar (social icons + search) -->
+  <div id="header-layout-2">
+    <div id="header-holder-2">
+      <!-- 2a. Social icons (flush left, under the logo) -->
+      <div class="icons-social">
+        <a id="icon-Facebook"
+           class="tooltip"
+           title="Facebook"
+           href="https://facebook.com/YourPage"
+           target="_blank"></a>
+        <a id="icon-GitHub"
+           class="tooltip"
+           title="GitHub"
+           href="https://github.com/YourRepo"
+           target="_blank"></a>
+        <a id="icon-Twitter"
+           class="tooltip"
+           title="X"
+           href="https://twitter.com/YourHandle"
+           target="_blank"></a>
+        <a id="icon-RSS"
+           class="tooltip"
+           title="RSS"
+           href="https://example.com/rss.xml"
+           target="_blank"></a>
+        <a id="icon-Instagram"
+           class="tooltip"
+           title="Instagram"
+           href="https://instagram.com/YourProfile"
+           target="_blank"></a>
+        <a id="icon-SoundCloud"
+           class="tooltip"
+           title="SoundCloud"
+           href="https://soundcloud.com/lollie-soft"
+           target="_blank"></a>
+        <a id="icon-YouTube"
+           class="tooltip"
+           title="YouTube"
+           href="https://youtube.com/YourProfile"
+           target="_blank"></a>
+      </div>    
+    </div>
+  </div>
+</div>

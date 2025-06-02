@@ -1,1 +1,77 @@
-<p>blog-list works!</p>
+<!-- src/app/blog/blog-list/blog-list.component.html -->
+<div class="container">
+  <div id="content-box">
+    <div class="content-flex">
+      <!-- 1) Blog list now comes first (left, 66%) -->
+      <div class="blog-list">
+        <div *ngFor="let post of blogList" class="blog-item">
+          <div class="blog-image" *ngIf="post.imagePath">
+            <img [src]="'https://localhost:44309' + post.imagePath"
+                 [alt]="post.title" />
+          </div>
+          <h2>
+            <a [routerLink]="['/blog', post.id]">
+              {{ post.title }}
+            </a>
+          </h2>
+
+          <p class="excerpt">
+            {{ post.content | slice: 0:150 }}
+            <span *ngIf="post.content.length > 150">…</span>
+          </p>
+
+          <a class="read-more" [routerLink]="['/blog', post.id]">
+            Read more →
+          </a>
+        </div>
+
+        <div *ngIf="blogList.length === 0" class="no-posts">
+          No public posts available.
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <div class="about-widget">
+          <h4>About</h4>
+          <p>
+            Lolliesoft features all original words, recording and production.
+            The content covers a variety of topics from various projects to software
+            development to automotive repair and random thoughts.
+          </p>
+        </div>
+
+        <div class="widget youtube-widget">
+          <h3></h3>
+          <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=YOUR_CHANNEL_ID"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+        </div>
+
+        <!-- SoundCloud widget -->
+        <div class="widget soundcloud-widget">
+          <h3></h3>
+          <iframe width="100%"
+                  height="166"
+                  scrolling="no"
+                  frameborder="no"
+                  allow="autoplay"
+                  src="https://w.soundcloud.com/player/?url=https://soundcloud.com/YOUR_SOUNDCLOUD_USER&color=%23ff5500&auto_play=false&hide_related=false&show_artwork=true"></iframe>
+        </div>
+
+        <div class="latest-articles-widget">
+          <h2>Random Articles</h2>
+          <ul>
+            <li *ngFor="let post of randomPosts">
+              <a [routerLink]="['/blog', post.slug]">{{ post.title }}</a>
+            </li>
+          </ul>
+        </div>
+        <!-- add more widgets here if desired -->
+      </aside>
+      <!-- /.sidebar -->
+    </div>
+    <!-- /.content-flex -->
+  </div>
+  <!-- /#content-box -->
+</div>
+<!-- /.container -->

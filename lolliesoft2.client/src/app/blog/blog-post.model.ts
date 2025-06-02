@@ -1,6 +1,7 @@
 export interface BlogPost {
   id: number;
   title: string;
+  slug: string;
   content: string;
   imagePath?: string;
   isPrivate: boolean;

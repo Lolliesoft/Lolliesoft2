@@ -8,7 +8,7 @@
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     <SpaRoot>..\lolliesoft2.client</SpaRoot>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
-    <SpaProxyServerUrl>https://localhost:52062</SpaProxyServerUrl>
+    <SpaProxyServerUrl>https://localhost:4200</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>

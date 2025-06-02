@@ -1,0 +1,85 @@
+/* src/app/blog/blog-list.component.css */
+
+/* 1) Remove #content-box’s horizontal padding—.container already handles it */
+#content-box {
+  margin-top: 0; /* sit directly under header */
+}
+
+.blog-list {
+  width: 66%;
+  margin: 0; /* no auto‐centering—pushes it to the left */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* so .blog-item still fills the 66% */
+  gap: 1.5rem;
+  padding: 1.5rem 0 1.5rem 0; /* top/bottom padding only (remove left/right if you want it flush) */
+}
+
+
+
+.blog-item {
+  background: var(--bg-color);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  width: 100%;
+}
+
+
+/* (Optional) If you want each image to also fill the card’s width: */
+.blog-image {
+  width: 100%;
+  padding-top: 56.25%; /* keeps 16:9 ratio */
+  position: relative;
+}
+
+  .blog-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+
+/* 5) Title and excerpt styling */
+.blog-item h2 {
+  margin: 0.75rem 1rem 0.5rem;
+  font-size: 1.2rem;
+}
+
+.blog-item .excerpt {
+  margin: 0 1rem 1rem;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.blog-item .read-more {
+  display: block;
+  margin: 0 1rem 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: #007bff;
+}
+
+  .blog-item .read-more:hover {
+    text-decoration: underline;
+  }
+
+/* 6) “No posts” message styling */
+.no-posts {
+  text-align: left;
+  color: #777;
+  font-style: italic;
+  margin: 2rem 0;
+}
+
+/* 7) Section title under header */
+.section-title {
+  margin: 0;
+  font-size: 1.75rem;
+  color: var(--heading-color);
+  font-family: var(--font-strict);
+}

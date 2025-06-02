@@ -1,3 +1,5 @@
+// src/app/app.module.ts
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -8,10 +10,12 @@ import { AppComponent } from './app.component';
 import { AuthInterceptor } from './core/auth.interceptor';
 import { LoginComponent } from './auth/login/login.component';
 
-// Importing blog component stubs
 import { BlogListComponent } from './blog/blog-list/blog-list.component';
 import { BlogDetailComponent } from './blog/blog-detail/blog-detail.component';
 import { BlogEditorComponent } from './blog/blog-editor/blog-editor.component';
+
+import { HeaderComponent } from './shared/header/header.component';
+import { ThemeService } from './shared/theme.service';
 
 @NgModule({
   declarations: [
@@ -19,7 +23,8 @@ import { BlogEditorComponent } from './blog/blog-editor/blog-editor.component';
     LoginComponent,
     BlogListComponent,
     BlogDetailComponent,
-    BlogEditorComponent
+    BlogEditorComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +37,8 @@ import { BlogEditorComponent } from './blog/blog-editor/blog-editor.component';
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
+    ThemeService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,0 +1,314 @@
+/* src/app/shared/header/header.component.css */
+
+/* =============================== */
+/* 1. Top navigation (.site-header) */
+/* =============================== */
+
+/* Ensure .site-header has space for the logo on the left */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1.5rem;
+  background: var(--header-bg);
+  color: var(--header-text);
+}
+
+/* 1a. Logo container/link */
+.logo-link {
+  display: inline-block;
+  margin-right: 2rem; /* space between logo and menu */
+}
+
+/* 1b. Logo image itself */
+.logo-img {
+  height: 70px; /* adjust as needed */
+  width: auto; /* keeps aspect ratio */
+  object-fit: contain;
+}
+
+/* =============================== */
+/* 2. Navigation menu (.nav-menu)  */
+/* =============================== */
+
+/* 2a. Nav menu container */
+.nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+  /* 2b. Menu links (uppercase, bold) */
+  .nav-menu a {
+    font-size: 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--header-text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* if you use a .nav-icon before text */
+  }
+
+    /* 2c. On hover, accent color */
+    .nav-menu a:hover {
+      color: var(--accent);
+    }
+
+/* 2d. If you include a small icon before each nav text */
+.nav-icon {
+  height: 20px;
+  width: 20px;
+  object-fit: contain;
+}
+
+/* =============================== */
+/* 3. Dark‐mode toggle button      */
+/* =============================== */
+
+.dark-toggle {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--header-text);
+}
+
+/* =============================== */
+/* 4. Responsive adjustments       */
+/* =============================== */
+
+@media (max-width: 600px) {
+  .site-header {
+    flex-wrap: wrap;
+  }
+
+  .logo-link {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Override site-header background */
+nav.site-header {
+  background-color: #494158;
+  color: #fff;
+}
+
+/* ================================================ */
+/* 5. Header Layout 2: Social icons + Search form   */
+/* ================================================ */
+
+/* Container below the main nav */
+#header-layout-2 {
+  background-color: #f5f5f5; /* light gray background */
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Centering and spacing for the inner block */
+#header-holder-2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 5a. Social icon container */
+.icons-social {
+  display: flex;
+  gap: 1rem;
+}
+
+  /* 5b. Each icon is an empty <a> with an ID; CSS supplies the background-image */
+  .icons-social a {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    position: relative;
+    background-color: transparent;
+    text-indent: -9999px; /* hide any text */
+    overflow: hidden;
+  }
+
+    /* 5c. Background-images for each social icon (from public/images) */
+    .icons-social a#icon-RSS {
+      background: url('/images/rss.ico') no-repeat center center;
+      background-size: contain;
+    }
+
+    .icons-social a#icon-Facebook {
+      background: url('/images/facebook.ico') no-repeat center center;
+      background-size: contain;
+    }
+
+    .icons-social a#icon-GitHub {
+      background: url('/images/github.ico') no-repeat center center;
+      background-size: contain;
+    }
+
+    .icons-social a#icon-Twitter {
+      background: url('/images/x.svg') no-repeat center center;
+      background-size: contain;
+    }
+
+    /* 5d. Hover effect on social icons */
+    .icons-social a:hover {
+      opacity: 0.7;
+    }
+
+/* 5e. Tooltip styling (display title text on hover) */
+.tooltip[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -1.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+/* 6. Search form (header) */
+/*    Keeping the search input + button with an icon inside the button */
+
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.search-input {
+  padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+  font-size: 14px;
+}
+
+.search-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  background-color: var(--header-bg);
+  cursor: pointer;
+}
+
+  .search-button img {
+    height: 18px;
+    width: 18px;
+    object-fit: contain;
+  }
+
+/* ================================================ */
+/* 7. Clearfix                                       */
+/* ================================================ */
+
+.clear {
+  clear: both;
+}
+
+/*─────────────────────────────────────────────────────────*/
+/* Second bar (Social icons only)                         */
+/*─────────────────────────────────────────────────────────*/
+
+/* 1) Outer second bar: full-width green background, fixed 36px height */
+#header-layout-2 {
+  background-color: #77BB66;
+  height: 36px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: center; /* center the inner header-holder */
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+/* 2) Make header-holder-2 the flex container and positioning context */
+#header-holder-2 {
+  display: flex;
+  align-items: center; /* vertical centering inside 36px bar */
+  width: 100%;
+  max-width: 1400px; /* match your .container max-width */
+  margin: 0 auto; /* center on large screens */
+  position: relative; /* .icons-social can be absolute relative to this */
+  padding: 0 1.5rem; /* left/right gutter for icons */
+}
+
+/* 3) Absolutely position the icons under the left gutter */
+.icons-social {
+  position: absolute;
+  left: 1.5rem; /* exactly the same as header-holder-2’s left padding */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 0.75rem; /* small gap between each icon */
+}
+
+  /* 4) Each social link is a 24×24px box, centered vertically */
+  .icons-social a {
+    display: inline-block;
+    width: 24px !important;
+    height: 24px !important;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+    text-indent: -9999px; /* hide link text */
+    overflow: hidden;
+  }
+
+    /* 4b) Point to your SVGs */
+    .icons-social a#icon-Facebook {
+      background-image: url('/images/facebook.svg');
+    }
+
+    .icons-social a#icon-GitHub {
+      background-image: url('/images/github.svg');
+    }
+
+    .icons-social a#icon-Twitter {
+      background-image: url('/images/x.svg');
+    }
+
+    .icons-social a#icon-RSS {
+      background-image: url('/images/rss.svg');
+    }
+
+    .icons-social a#icon-Instagram {
+      background-image: url('/images/instagram.svg');
+    }
+
+    .icons-social a#icon-SoundCloud {
+      background-image: url('/images/soundcloud.svg');
+    }
+
+    .icons-social a#icon-YouTube {
+      background-image: url('/images/youtube.svg');
+    }
+
+    /* 4c) Hover effect on social icons */
+    .icons-social a:hover {
+      opacity: 0.75;
+    }
+
+/* 5) Clearfix (if you still need it elsewhere) */
+.clear {
+  clear: both;
+}
+
+/* 6) On very narrow screens, keep them under the same gutter */
+@media (max-width: 600px) {
+  .icons-social {
+    left: 1.5rem; /* maintain gutter alignment on small screens */
+  }
+}
+
