@@ -11,15 +11,17 @@
     <!-- Navigation links -->
     <ul class="nav-menu">
       <li><a routerLink="/blog">BLOG</a></li>
-      <li><a routerLink="/admin/blog">ADMIN</a></li>
+      <li *ngIf="!authService.isLoggedIn()"><a routerLink="/login">LOGIN</a></li>
+      <li *ngIf="authService.isLoggedIn()"><a routerLink="/admin/blog/new">ADMIN</a></li>
+      <li *ngIf="authService.isLoggedIn()"><a (click)="logout()">LOGOUT</a></li>
     </ul>
 
-   <!-- Dark‐mode slider on the right -->
-  <label class="theme-switch" title="Toggle light/dark mode">
-    <input type="checkbox" id="theme-toggle" />
-    <span class="slider"></span>
-  </label>
-</nav>
+    <!-- Dark‐mode slider on the right -->
+    <label class="theme-switch" title="Toggle light/dark mode">
+      <input type="checkbox" id="theme-toggle" />
+      <span class="slider"></span>
+    </label>
+  </nav>
 
   <!-- 2. Second bar (social icons + search) -->
   <div id="header-layout-2">
@@ -61,7 +63,7 @@
            title="YouTube"
            href="https://youtube.com/YourProfile"
            target="_blank"></a>
-      </div>    
+      </div>
     </div>
   </div>
 </div>

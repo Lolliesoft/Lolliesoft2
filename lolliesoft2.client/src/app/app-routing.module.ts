@@ -1,7 +1,6 @@
-// src/app/app-routing.module.ts
-
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { BlogListComponent } from './blog/blog-list/blog-list.component';
 import { BlogDetailComponent } from './blog/blog-detail/blog-detail.component';
 import { BlogEditorComponent } from './blog/blog-editor/blog-editor.component';
@@ -15,12 +14,12 @@ const routes: Routes = [
 
   // Admin/editor pages (protected)
   {
-    path: 'admin/blog',
+    path: 'admin/blog/new',
     component: BlogEditorComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'admin/blog/:id',
+    path: 'admin/blog/edit/:id',
     component: BlogEditorComponent,
     canActivate: [AuthGuard]
   },

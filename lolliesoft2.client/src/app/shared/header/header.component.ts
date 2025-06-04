@@ -1,5 +1,8 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ThemeService } from '../theme.service';
+// Correct the path to AuthService:
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -7,7 +10,11 @@ import { ThemeService } from '../theme.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, AfterViewInit {
-  constructor(public theme: ThemeService) { }
+  constructor(
+    public theme: ThemeService,
+    public authService: AuthService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.theme.initTheme();
@@ -30,5 +37,10 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
   toggleDark() {
     this.theme.toggle();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 }

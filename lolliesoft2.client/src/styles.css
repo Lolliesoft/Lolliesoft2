@@ -401,6 +401,71 @@ button, .btn {
     .latest-articles-widget a:hover {
       text-decoration: underline;
     }
+
+.newsletter-widget {
+  margin-bottom: 20px;
+  padding: 1rem;
+  background-color: #f9f9f9; /* adjust as desired */
+  border-radius: 4px;
+}
+
+  .newsletter-widget h3 {
+    margin-top: 0;
+    font-size: 1.25rem;
+  }
+
+  .newsletter-widget form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .newsletter-widget label {
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .newsletter-widget input[type="email"] {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .newsletter-widget .button {
+    background-color: #0073e6; /* Mailchimp blue or your brand color */
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+    .newsletter-widget .button:hover {
+      background-color: #005bb5;
+    }
+
+  .newsletter-widget .required {
+    color: #d9534f;
+  }
+
+  .newsletter-widget .mc-field-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+.clear {
+  margin-top: 0.5rem;
+}
+
+/* Ensure parent containers don’t hide overflow */
+.sidebar {
+  overflow: visible;
+}
+
 /*─────────────────────────────────────────────────────────*/
 /* content-flex: two-column layout inside #content-box   */
 /*─────────────────────────────────────────────────────────*/
