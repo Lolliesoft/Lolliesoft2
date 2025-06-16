@@ -1,5 +1,4 @@
 <!-- src/app/shared/header/header.component.html -->
-<!-- Wrap both the top nav and the second bar in a shared container -->
 <div class="container">
   <!-- 1. Top navigation bar -->
   <nav class="site-header">
@@ -10,59 +9,63 @@
 
     <!-- Navigation links -->
     <ul class="nav-menu">
-      <li><a routerLink="/blog">BLOG</a></li>
-      <li *ngIf="!authService.isLoggedIn()"><a routerLink="/login">LOGIN</a></li>
-      <li *ngIf="authService.isLoggedIn()"><a routerLink="/admin/blog/new">ADMIN</a></li>
-      <li *ngIf="authService.isLoggedIn()"><a (click)="logout()">LOGOUT</a></li>
+      <li><a routerLink="/blog">HOME</a></li>
+      <li *ngIf="authService.isLoggedIn()">
+        <a routerLink="/admin/blog/new">NEW POST</a>
+      </li>
     </ul>
 
-    <!-- Dark‐mode slider on the right -->
+    <!-- Login icon (only when NOT logged in) -->
+    <a *ngIf="!authService.isLoggedIn()"
+       routerLink="/login"
+       class="auth-icon"
+       title="Login">
+      <img src="/images/login.svg" alt="Login" />
+    </a>
+
+    <!-- Logout icon (only when logged in) -->
+    <a *ngIf="authService.isLoggedIn()"
+       (click)="logout()"
+       class="auth-icon"
+       title="Logout">
+      <img src="/images/logout.svg" alt="Logout" />
+    </a>
+
+    <!-- Dark-mode switch -->
     <label class="theme-switch" title="Toggle light/dark mode">
-      <input type="checkbox" id="theme-toggle" />
+      <input type="checkbox"
+             [checked]="theme.isDarkModeEnabled()"
+             (change)="toggleDark()" />
       <span class="slider"></span>
     </label>
   </nav>
 
-  <!-- 2. Second bar (social icons + search) -->
+  <!-- 2. Second bar (social icons + new-post button) -->
   <div id="header-layout-2">
     <div id="header-holder-2">
-      <!-- 2a. Social icons (flush left, under the logo) -->
+      <!-- Social icons (flush left, under the logo) -->
       <div class="icons-social">
-        <a id="icon-Facebook"
-           class="tooltip"
-           title="Facebook"
-           href="https://facebook.com/YourPage"
-           target="_blank"></a>
-        <a id="icon-GitHub"
-           class="tooltip"
-           title="GitHub"
-           href="https://github.com/YourRepo"
-           target="_blank"></a>
-        <a id="icon-Twitter"
-           class="tooltip"
-           title="X"
-           href="https://twitter.com/YourHandle"
-           target="_blank"></a>
-        <a id="icon-RSS"
-           class="tooltip"
-           title="RSS"
-           href="https://example.com/rss.xml"
-           target="_blank"></a>
-        <a id="icon-Instagram"
-           class="tooltip"
-           title="Instagram"
-           href="https://instagram.com/YourProfile"
-           target="_blank"></a>
-        <a id="icon-SoundCloud"
-           class="tooltip"
-           title="SoundCloud"
-           href="https://soundcloud.com/lollie-soft"
-           target="_blank"></a>
-        <a id="icon-YouTube"
-           class="tooltip"
-           title="YouTube"
-           href="https://youtube.com/YourProfile"
-           target="_blank"></a>
+        <a id="icon-Facebook" class="tooltip" title="Facebook"
+           href="https://facebook.com/YourPage" target="_blank"></a>
+        <a id="icon-GitHub" class="tooltip" title="GitHub"
+           href="https://github.com/YourRepo" target="_blank"></a>
+        <a id="icon-Twitter" class="tooltip" title="X"
+           href="https://twitter.com/YourHandle" target="_blank"></a>
+        <a id="icon-RSS" class="tooltip" title="RSS"
+           href="https://example.com/rss.xml" target="_blank"></a>
+        <a id="icon-Instagram" class="tooltip" title="Instagram"
+           href="https://instagram.com/YourProfile" target="_blank"></a>
+        <a id="icon-SoundCloud" class="tooltip" title="SoundCloud"
+           href="https://soundcloud.com/lollie-soft" target="_blank"></a>
+        <a id="icon-YouTube" class="tooltip" title="YouTube"
+           href="https://youtube.com/YourProfile" target="_blank"></a>
+      </div>
+
+      <!-- New Post button (right side) -->
+      <div id="header-newpost" *ngIf="authService.isLoggedIn()">
+        <a routerLink="/admin/blog/new" class="btn btn-sm btn-primary">
+          Add Post +
+        </a>
       </div>
     </div>
   </div>

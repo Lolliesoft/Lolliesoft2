@@ -1,7 +1,8 @@
+// src/app/blog/blog-editor/blog-editor.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { BlogService } from '../../services/blog.service';
 import { BlogPost } from '../blog-post.model';
 
@@ -11,17 +12,47 @@ import { BlogPost } from '../blog-post.model';
   styleUrls: ['./blog-editor.component.css']
 })
 export class BlogEditorComponent implements OnInit {
-  // Form group for title, content, isPrivate, and file
-  blogForm!: FormGroup;
+  public blogForm!: FormGroup;
 
-  // If editing, postId holds the numeric ID. Undefined means “create new.”
+  public editorInit: any = {
+    license_key: 'gpl',
+    base_url: '/assets/tinymce',
+    suffix: '.min',
+    height: 300,
+    plugins: [
+      'advlist', 'autolink', 'lists', 'link', 'image',
+      'charmap', 'preview', 'anchor', 'searchreplace',
+      'visualblocks', 'code', 'fullscreen',
+      'insertdatetime', 'media', 'table', 'paste',
+      'help', 'wordcount'
+    ],
+    toolbar: [
+      'undo redo',
+      'formatselect',
+      'bold italic backcolor',
+      'alignleft aligncenter alignright alignjustify',
+      'bullist numlist outdent indent',
+      'removeformat',
+      'image',
+      'help'
+    ].join(' | '),
+    images_upload_handler: (blobInfo: any, progress: (pct: number) => void) => {
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onprogress = evt => {
+          if (evt.lengthComputable) {
+            progress(Math.round((evt.loaded / evt.total) * 100));
+          }
+        };
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject('Failed to read file');
+        reader.readAsDataURL(blobInfo.blob());
+      });
+    }
+  };
+
   postId?: number;
   isEdit = false;
-
-  // Holds the selected image file (if any)
-  imageFile?: File;
-
-  // For UI feedback
   loading = false;
   errorMessage?: string;
 
@@ -33,90 +64,81 @@ export class BlogEditorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // 1) Build the reactive form
     this.blogForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(200)]],
-      content: ['', [Validators.required]],
-      isPrivate: [false],      // Example “private” flag
-      image: [null]            // For file input (not a form control used on submit)
+      content: ['', Validators.required],
+      isPrivate: [false],
+      image: [null]
     });
 
-    // 2) Check route for an “id” parameter to switch into edit mode
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.isEdit = true;
       this.postId = +idParam;
-      this.loadPost(this.postId);
+      this.blogService.get(this.postId).subscribe({
+        next: post => {
+          this.blogForm.patchValue({
+            title: post.title,
+            content: post.content,
+            isPrivate: post.isPrivate
+          });
+        },
+        error: err => {
+          console.error('Failed to load post', err);
+          this.errorMessage = 'Failed to load post.';
+        }
+      });
     }
   }
 
-  /**
-   * If editing, fetch the existing post and patch the form values.
-   */
-  loadPost(id: number): void {
-    this.blogService.get(id).subscribe({
-      next: (post: BlogPost) => {
-        this.blogForm.patchValue({
-          title: post.title,
-          content: post.content,
-          isPrivate: post.isPrivate
-        });
-      },
-      error: (err: any) => {
-        console.error('Failed to load post', err);
-        this.errorMessage = 'Failed to load post.';
-      }
-    });
-  }
-
-  /**
-   * Called when the user selects a file. We store it in `imageFile`.
-   */
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.imageFile = input.files[0];
+    if (input.files?.length) {
+      this.blogForm.patchValue({ image: input.files[0] });
     }
   }
 
-  /**
-   * On form submit: either create a new post or update an existing one.
-   */
   onSubmit(): void {
     if (this.blogForm.invalid) {
       return;
     }
 
-    // Build the FormData payload
     const formData = new FormData();
-    formData.append('Title', this.blogForm.get('title')!.value);
-    formData.append('Content', this.blogForm.get('content')!.value);
-    formData.append('IsPrivate', this.blogForm.get('isPrivate')!.value.toString());
-
-    if (this.imageFile) {
-      formData.append('Image', this.imageFile);
+    formData.append('Title', this.blogForm.value.title);
+    formData.append('Content', this.blogForm.value.content);
+    formData.append('IsPrivate', this.blogForm.value.isPrivate.toString());
+    if (this.blogForm.value.image) {
+      formData.append('Image', this.blogForm.value.image);
     }
 
     this.loading = true;
 
-    // If isEdit && postId exists, call update; otherwise call create
-    const request$: Observable<any> = this.isEdit && this.postId
-      ? this.blogService.update(this.postId, formData)
-      : this.blogService.create(formData);
-
-    request$.subscribe({
-      next: (result: BlogPost) => {
-        // On success:
-        // • If we created a new post, navigate to its detail page.
-        // • If we updated, navigate back to that post’s detail.
-        const targetId = this.isEdit && this.postId ? this.postId : (result.id);
-        this.router.navigate(['/blog', targetId]);
-      },
-      error: (err: any) => {
-        console.error('Save failed', err);
-        this.errorMessage = 'Save failed. Please try again.';
-        this.loading = false;
-      }
-    });
+    if (this.isEdit && this.postId) {
+      // —— UPDATE (void) —— 
+      this.blogService.update(this.postId, formData).subscribe({
+        next: () => {
+          this.loading = false;
+          this.router.navigate(['/blog', this.postId]);
+        },
+        error: (err) => {
+          console.error('Update failed', err);
+          this.errorMessage = 'Update failed. Please try again.';
+          this.loading = false;
+        }
+      });
+    } else {
+      // —— CREATE (BlogPost) ——
+      this.blogService.create(formData).subscribe({
+        next: (newPost: BlogPost) => {
+          this.loading = false;
+          this.router.navigate(['/blog', newPost.id]);
+        },
+        error: (err) => {
+          console.error('Create failed', err);
+          this.errorMessage = 'Create failed. Please try again.';
+          this.loading = false;
+        }
+      });
+    }
   }
 }

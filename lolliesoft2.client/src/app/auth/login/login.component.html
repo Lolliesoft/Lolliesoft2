@@ -1,6 +1,7 @@
 <div class="login-container">
-  <h2>Login</h2>
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-box">
+    <h2>Login</h2>
+
     <div>
       <label for="email">Email</label>
       <input id="email" type="email" formControlName="email" />

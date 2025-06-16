@@ -1,12 +1,13 @@
+// src/app/auth/login/login.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../../services/auth.service';  // ← HERE
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
@@ -15,7 +16,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private authService: AuthService,           // same service!
     private router: Router,
     private route: ActivatedRoute
   ) { }
@@ -25,57 +26,23 @@ export class LoginComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
-
-    // Get returnUrl from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    // strip leading slash so Router.navigate can match
+    const raw = this.route.snapshot.queryParams['returnUrl'] || '';
+    this.returnUrl = raw.replace(/^\/+/, '');
   }
 
   onSubmit(): void {
-    if (this.loginForm.invalid) {
-      return;
-    }
+    if (this.loginForm.invalid) return;
     const { email, password } = this.loginForm.value;
     this.authService.login(email, password).subscribe({
-      next: () => {
-        this.router.navigateByUrl(this.returnUrl);
+      next: res => {
+        this.authService.setToken(res.token);
+        // navigate *after* setToken, guard will now see isLoggedIn()===true
+        this.router.navigate(this.returnUrl ? [this.returnUrl] : ['/']);
       },
       error: err => {
         this.errorMessage = 'Login failed. Please check your credentials.';
-        console.error(err);
       }
     });
   }
 }
-
-
-// src/app/auth/login/login.component.html
-/*
-<div class="login-container">
-  <h2>Login</h2>
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <div>
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" />
-      <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error">
-        <small *ngIf="loginForm.get('email')?.errors?.['required']">Email is required.</small>
-        <small *ngIf="loginForm.get('email')?.errors?.['email']">Invalid email format.</small>
-      </div>
-    </div>
-
-    <div>
-      <label for="password">Password</label>
-      <input id="password" type="password" formControlName="password" />
-      <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error">
-        <small *ngIf="loginForm.get('password')?.errors?.['required']">Password is required.</small>
-        <small *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters.</small>
-      </div>
-    </div>
-
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-
-    <button type="submit" [disabled]="loginForm.invalid">Login</button>
-  </form>
-</div>
-*/

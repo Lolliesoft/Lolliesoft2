@@ -2,6 +2,13 @@
   <div class="blog-detail">
     <h1>{{ post.title }}</h1>
 
+    <!-- Edit button for the author -->
+    <button *ngIf="currentUserId === post.authorId"
+            [routerLink]="['/admin/blog/edit', post.id]"
+            class="btn btn-secondary mb-3">
+      Edit This Post
+    </button>
+
     <div class="detail-image" *ngIf="post.imagePath">
       <img [src]="'https://localhost:44309' + post.imagePath"
            [alt]="post.title" />

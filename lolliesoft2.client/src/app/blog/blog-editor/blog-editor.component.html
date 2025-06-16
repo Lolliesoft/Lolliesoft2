@@ -1,3 +1,4 @@
+<!-- src/app/blog/blog-editor/blog-editor.component.html -->
 <div class="editor-container" *ngIf="blogForm">
   <h2>{{ isEdit ? 'Edit Post' : 'New Post' }}</h2>
 
@@ -5,43 +6,65 @@
     <!-- Title -->
     <div class="form-group">
       <label for="title">Title</label>
-      <input id="title" type="text" formControlName="title" />
-      <div class="error" *ngIf="blogForm.get('title')?.invalid && blogForm.get('title')?.touched">
-        <small *ngIf="blogForm.get('title')?.errors?.['required']">Title is required.</small>
-        <small *ngIf="blogForm.get('title')?.errors?.['maxlength']">Max 200 characters.</small>
+      <input id="title"
+             type="text"
+             formControlName="title"
+             class="form-control" />
+      <div class="error"
+           *ngIf="blogForm.get('title')?.invalid && blogForm.get('title')?.touched">
+        <small *ngIf="blogForm.get('title')?.errors?.['required']">
+          Title is required.
+        </small>
+        <small *ngIf="blogForm.get('title')?.errors?.['maxlength']">
+          Max 200 characters.
+        </small>
       </div>
     </div>
 
-    <!-- Content -->
+    <!-- TinyMCE Editor (Self-Hosted) -->
     <div class="form-group">
       <label for="content">Content</label>
-      <textarea id="content" rows="6" formControlName="content"></textarea>
-      <div class="error" *ngIf="blogForm.get('content')?.invalid && blogForm.get('content')?.touched">
-        <small *ngIf="blogForm.get('content')?.errors?.['required']">Content is required.</small>
+      <editor id="content"
+              formControlName="content"
+              [init]="editorInit">
+      </editor>
+      <div class="error"
+           *ngIf="blogForm.get('content')?.invalid && blogForm.get('content')?.touched">
+        <small *ngIf="blogForm.get('content')?.errors?.['required']">
+          Content is required.
+        </small>
       </div>
     </div>
 
     <!-- Private Toggle -->
-    <div class="form-group">
-      <label>
-        <input type="checkbox" formControlName="isPrivate" />
+    <div class="form-group form-check">
+      <input id="isPrivate"
+             class="form-check-input"
+             type="checkbox"
+             formControlName="isPrivate" />
+      <label for="isPrivate" class="form-check-label">
         Private
       </label>
     </div>
 
-    <!-- Image Upload -->
+    <!-- Featured Image Upload -->
     <div class="form-group">
       <label for="image">Image (max 15 MB)</label>
-      <input id="image" type="file" (change)="onFileSelected($event)" />
+      <input id="image"
+             type="file"
+             class="form-control-file"
+             (change)="onFileSelected($event)" />
     </div>
 
     <!-- Error Message -->
-    <div *ngIf="errorMessage" class="error-message">
+    <div *ngIf="errorMessage" class="alert alert-danger">
       {{ errorMessage }}
     </div>
 
-    <!-- Submit -->
-    <button type="submit" [disabled]="blogForm.invalid || loading">
+    <!-- Submit Button -->
+    <button type="submit"
+            class="btn btn-primary"
+            [disabled]="blogForm.invalid || loading">
       {{ loading ? 'Saving…' : (isEdit ? 'Update Post' : 'Create Post') }}
     </button>
   </form>

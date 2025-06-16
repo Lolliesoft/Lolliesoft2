@@ -1,15 +1,16 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+// src/app/shared/header/header.component.ts
+
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService } from '../theme.service';
-// Correct the path to AuthService:
-import { AuthService } from '../../auth/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit, AfterViewInit {
+export class HeaderComponent implements OnInit {
   constructor(
     public theme: ThemeService,
     public authService: AuthService,
@@ -20,22 +21,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     this.theme.initTheme();
   }
 
-  ngAfterViewInit() {
-    const toggleEl = document.getElementById('theme-toggle') as HTMLInputElement;
-    if (!toggleEl) {
-      return;
-    }
-
-    // Set the checkbox based on the current theme
-    toggleEl.checked = this.theme.isDarkModeEnabled();
-
-    // When the user flips the switch, call theme.toggle()
-    toggleEl.addEventListener('change', () => {
-      this.toggleDark();
-    });
-  }
-
-  toggleDark() {
+  toggleDark(): void {
     this.theme.toggle();
   }
 

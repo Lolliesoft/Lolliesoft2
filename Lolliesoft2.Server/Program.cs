@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,13 +16,12 @@ builder.Services.AddDbContext<BlogDbContext>(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("BlogDb"))
 );
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opts => {
-    // you can tweak password rules here
     opts.Password.RequireDigit = false;
     opts.Password.RequiredLength = 6;
     opts.Password.RequireNonAlphanumeric = false;
 })
-    .AddEntityFrameworkStores<BlogDbContext>()
-    .AddDefaultTokenProviders();
+.AddEntityFrameworkStores<BlogDbContext>()
+.AddDefaultTokenProviders();
 
 // 2) JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"];
@@ -59,7 +59,38 @@ builder.Services.AddCors(opts => {
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// 4) Swagger/OpenAPI (v1) + JWT‐Bearer setup
+builder.Services.AddSwaggerGen(c => {
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Lolliesoft2 API",
+        Version = "v1"
+    });
+
+    // Define the Bearer auth scheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter: `Bearer {your token}`",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    // Require Bearer for all endpoints
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id   = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -72,7 +103,7 @@ app.UseExceptionHandler(eh => {
     });
 });
 
-// Apply migrations at startup
+// Auto‐apply EF migrations at startup
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
@@ -83,18 +114,23 @@ app.UseCors("AllowAngular");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+// Swagger UI (only in Development)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lolliesoft2 API V1");
+        c.RoutePrefix = "swagger";  // UI at /swagger
+    });
 }
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();   // ← must come before UseAuthorization
+app.UseAuthentication();  // must come before UseAuthorization
 app.UseAuthorization();
 
 app.MapControllers();
 app.MapFallbackToFile("/index.html");
+
 
 app.Run();

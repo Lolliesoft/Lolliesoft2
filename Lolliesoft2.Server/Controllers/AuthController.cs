@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Threading.Tasks;
 using Lolliesoft2.Server.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -28,7 +29,9 @@ namespace Lolliesoft2.Server.Controllers
             _config = config;
         }
 
+        // Allow anyone to register
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             var user = new ApplicationUser { UserName = dto.Email, Email = dto.Email };
@@ -39,22 +42,32 @@ namespace Lolliesoft2.Server.Controllers
             return Ok(new { message = "User created" });
         }
 
+        // Allow anyone to login and get a JWT
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var user = await _users.FindByEmailAsync(dto.Email);
-            if (user == null) return Unauthorized();
+            if (user == null)
+                return Unauthorized(new { error = "Invalid credentials." });
 
             var signInRes = await _signIn.CheckPasswordSignInAsync(user, dto.Password, false);
-            if (!signInRes.Succeeded) return Unauthorized();
+            if (!signInRes.Succeeded)
+                return Unauthorized(new { error = "Invalid credentials." });
 
-            // Generate JWT
-            var claims = new[] {
+            // Build claims
+            var claims = new[]
+            {
                 new System.Security.Claims.Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new System.Security.Claims.Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
                 new System.Security.Claims.Claim(JwtRegisteredClaimNames.Email, user.Email)
             };
+
+            // Create signing credentials
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            // Build the token
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Issuer"],
@@ -62,6 +75,8 @@ namespace Lolliesoft2.Server.Controllers
                 expires: DateTime.UtcNow.AddHours(2),
                 signingCredentials: creds
             );
+
+            // Return the serialized token
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token)
@@ -71,13 +86,13 @@ namespace Lolliesoft2.Server.Controllers
 
     public class RegisterDto
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
     }
 
     public class LoginDto
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
     }
 }

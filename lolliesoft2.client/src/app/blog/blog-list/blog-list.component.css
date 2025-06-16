@@ -1,4 +1,5 @@
 /* src/app/blog/blog-list.component.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@10&700&display=swap');
 
 /* 1) Remove #content-box’s horizontal padding—.container already handles it */
 #content-box {
@@ -24,8 +25,22 @@
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   width: 100%;
+  position: relative;
 }
 
+.post-controls {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2;
+}
+
+  .post-controls button {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
 
 /* (Optional) If you want each image to also fill the card’s width: */
 .blog-image {
@@ -44,11 +59,15 @@
   }
 
 
-/* 5) Title and excerpt styling */
+  /* 5) Title and excerpt styling */
 .blog-item h2 {
-  margin: 0.75rem 1rem 0.5rem;
-  font-size: 1.2rem;
+  margin: 1rem;
+  font-size: 2.25rem;
+  line-height: 1.3;
+  font-weight: 700;
+  font-family: Roboto, serif;
 }
+
 
 .blog-item .excerpt {
   margin: 0 1rem 1rem;

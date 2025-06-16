@@ -11,16 +11,16 @@
   /* Base colors */
   --bg-color: #ebebeb; /* page background */
   --text-color: #2c3e50; /* primary text */
-  --header-bg: #5b4141; /* top bar */
+  --header-bg: #5b414; /* top bar */
   --header-text: #ecf0f1; /* nav text */
-  --header-color: #494158; /* bright red accent */
+  --header-color: #494158 /* bright red accent */
   --accent-hover: #c0392b; /* darker red hover */
   --card-bg: #ffffff; /* card background */
   --card-border: #ecf0f1; /* light border */
   --button-bg: var(--accent);
   --button-hover: var(--accent-hover);
   --heading-color: #494158; /* headings */
-  --font-strict: 'StrictThemes', sans-serif;
+  --font-strict: 'Roboto';
   --text-hover-color: #77BB66; /* your hover color */
 }
 
@@ -79,6 +79,9 @@ span:hover {
   justify-content: center; /* centers the inner .container */
   align-items: center;
   padding: 1rem 0; /* only vertical padding, no horizontal */
+  /* Round top corners only */
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
 }
 
   /* Inside the nav, .container now handles horizontal centering/gutters */
@@ -133,11 +136,31 @@ button, .btn {
 .blog-item {
   width: 640px;
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
+  border: 2px solid #444;
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+
+.post-controls {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2;
+}
+
+  /* Light mode styling for Edit and Delete buttons */
+  .post-controls button {
+    background-color: #444; /* dark gray for visibility */
+    color: #fff;
+    border: none;
+  }
+
+    .post-controls button:hover {
+      background-color: #222; /* even darker on hover */
+    }
 
 .blog-image {
   position: relative;
@@ -163,7 +186,13 @@ button, .btn {
 .blog-item .excerpt {
   margin: 0 1rem 1rem;
   color: #555;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 
 .blog-item .read-more {
   display: inline-block;
@@ -215,6 +244,15 @@ button, .btn {
   --heading-color: #c0c0c0;
 }
 
+  [data-theme="dark"] .post-controls button {
+    background-color: #e74c3c; /* existing red in dark mode */
+    color: #fff;
+  }
+
+    [data-theme="dark"] .post-controls button:hover {
+      background-color: #c0392b;
+    }
+
 /*─────────────────────────────────────────────────────────*/
 /* Global “container” for centering content and giving a max‐width */
 /*─────────────────────────────────────────────────────────*/
@@ -241,6 +279,9 @@ button, .btn {
   align-items: center;
   padding: 0;
   margin: 0;
+  /* Rounded bottom corners */
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
 }
 
 
@@ -353,6 +394,7 @@ button, .btn {
     display: block;
   }
 
+
 .about-widget {
   background-color: transparent;
   padding: 1rem;
@@ -372,7 +414,7 @@ button, .btn {
   }
 
 .latest-articles-widget {
-  background-color: transparent; 
+  background-color: transparent;
   padding: 1rem;
   text-align: left;
 }
@@ -500,11 +542,14 @@ button, .btn {
   color: var(--heading-color);
 }
 
-.youtube-widget iframe {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border: none;
-  display: block;
+.youtube-widget {
+  background-color: #cccccc;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 0.5rem; /* ✅ add space from header above */
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /*─────────────────────────────────────────────────────────*/
@@ -651,3 +696,236 @@ button, .btn {
   [data-theme="dark"] .theme-switch input:checked + .slider::before {
     background-color: var(--header-text);
   }
+/*─────────────────────────────────────────────────────────*/
+/* Login Form Styling                                      */
+/*─────────────────────────────────────────────────────────*/
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* ⬅ aligns content to the top */
+  padding-top: 4rem; /* ⬅ space below the header */
+  min-height: calc(100vh - 80px); /* ensures full height minus typical header */
+  background-color: var(--bg-color);
+}
+
+
+.login-box {
+  background: var(--card-bg);
+  color: var(--text-color);
+  padding: 3rem 2rem;
+  min-height: 460px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+  .login-box h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--heading-color);
+  }
+
+  .login-box label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+  }
+
+  .login-box input[type="email"],
+  .login-box input[type="password"] {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #fff;
+    color: #000;
+  }
+
+  .login-box button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+    .login-box button:hover {
+      background-color: #222;
+    }
+
+.error-message {
+  color: #d9534f;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Dark mode overrides for login */
+[data-theme="dark"] .login-box {
+  background-color: #2d2d2d;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+  [data-theme="dark"] .login-box input {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #666;
+  }
+
+  [data-theme="dark"] .login-box button {
+    background-color: #e74c3c;
+  }
+
+    [data-theme="dark"] .login-box button:hover {
+      background-color: #c0392b;
+    }
+
+/*─────────────── SoundCloud Widget Styling ───────────────*/
+.soundcloud-widget {
+  background-color: var(--bg-color);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+  .soundcloud-widget iframe {
+    width: 100%;
+    height: 166px; /* typical SoundCloud height */
+    border: none;
+    display: block;
+  }
+
+/* Dark mode variant */
+[data-theme="dark"] .youtube-widget,
+[data-theme="dark"] .soundcloud-widget {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-color);
+}
+
+/*─────────────── Random Articles Widget Styling ───────────────*/
+.latest-articles-widget {
+  background-color: var(--bg-color);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+  .latest-articles-widget h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: var(--heading-color);
+  }
+
+/* Mini card layout for each article */
+/* Style for the container widget (already exists) */
+.latest-articles-widget {
+  /* leave as-is unless you want more padding/margin */
+}
+
+/* Each article box (card) */
+.article-card {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 1rem;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+  height: 120px; /* 🔼 increased height */
+}
+
+  .article-card a {
+    display: flex;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+  }
+
+/* Make image taller and wider */
+.article-image {
+  flex: 0 0 165px; /* 🔼 increased width */
+  height: 215%; /* full height of card */
+  background-color: #ddd;
+  overflow: hidden;
+}
+
+  .article-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+/* Article title block */
+.article-info {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  background-color: #ebebeb; /* ✅ match the widget's background */
+}
+
+[data-theme="dark"] .article-info {
+  background-color: #1e1e1e; /* match your dark widget/card background */
+}
+
+  .article-info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+
+  .article-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+/* Thumbnail on the left */
+
+  .article-image.placeholder {
+    background-color: #ccc;
+    width: 80px;
+    height: 80px;
+  }
+
+
+/* Dark mode support */
+[data-theme="dark"] .latest-articles-widget,
+[data-theme="dark"] .article-card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+  color: var(--text-color);
+}
+
+/* shared styling for login + logout icons */
+.auth-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: 0.75rem; /* space before the theme switch */
+  line-height: 0;
+  cursor: pointer;
+}
+
+.auth-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
