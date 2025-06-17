@@ -11,6 +11,9 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  // bind this to your search input
+  public searchQuery: string = '';
+
   constructor(
     public theme: ThemeService,
     public authService: AuthService,
@@ -28,5 +31,18 @@ export class HeaderComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/']);
+  }
+
+  /**
+   * Called on each keystroke in the header search box.
+   * Navigates to /blog with a `q` query param so your
+   * BlogListComponent can pick it up and filter accordingly.
+   */
+  public searchPosts(): void {
+    const q = this.searchQuery.trim();
+    this.router.navigate(
+      ['/blog'],
+      { queryParams: q ? { q } : {} }
+    );
   }
 }

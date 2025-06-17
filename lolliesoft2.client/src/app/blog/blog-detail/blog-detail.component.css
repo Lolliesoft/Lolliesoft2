@@ -1,5 +1,6 @@
 .blog-detail {
-  max-width: 800px;
+  position: relative; /* added to become the positioning context */
+  max-width: 1200px;
   margin: 2rem auto;
   padding: 1rem;
 }
@@ -20,4 +21,18 @@
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+
+/* --------------------------------------------- */
+/* 3. Edit button wrapper, pinned top-right      */
+/* --------------------------------------------- */
+.blog-detail .edit-post {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+  .blog-detail .edit-post .btn {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
   }

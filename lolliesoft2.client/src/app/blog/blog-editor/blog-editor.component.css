@@ -1,5 +1,5 @@
 .editor-container {
-  max-width: 600px;
+  max-width: 1300px;
   margin: 2rem auto;
   padding: 1.5rem;
   background: #fafafa;
@@ -47,3 +47,19 @@ button {
     background: #aaa;
     cursor: not-allowed;
   }
+
+/* make the whole TinyMCE shell visible again and taller */
+:host ::ng-deep .tox-tinymce {
+  visibility: visible !important;
+  height: 600px !important; /* whatever total height you like */
+}
+
+/* ensure the edit‐area iframe fills that new height */
+:host ::ng-deep .tox-edit-area__iframe {
+  height: 100% !important;
+}
+
+/* explicit show of the status bar */
+:host ::ng-deep .tox-statusbar {
+  visibility: visible !important;
+}

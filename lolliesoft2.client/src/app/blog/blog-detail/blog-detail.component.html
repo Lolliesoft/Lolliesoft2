@@ -1,13 +1,15 @@
+<!-- src/app/blog/blog-detail/blog-detail.component.html -->
 <ng-container *ngIf="post; else loading">
   <div class="blog-detail">
-    <h1>{{ post.title }}</h1>
+    <!-- move the edit button into its own wrapper -->
+    <div *ngIf="currentUserId === post.authorId" class="edit-post">
+      <button [routerLink]="['/admin/blog/edit', post.id]"
+              class="btn btn-secondary">
+        Edit This Post
+      </button>
+    </div>
 
-    <!-- Edit button for the author -->
-    <button *ngIf="currentUserId === post.authorId"
-            [routerLink]="['/admin/blog/edit', post.id]"
-            class="btn btn-secondary mb-3">
-      Edit This Post
-    </button>
+    <h1>{{ post.title }}</h1>
 
     <div class="detail-image" *ngIf="post.imagePath">
       <img [src]="'https://localhost:44309' + post.imagePath"

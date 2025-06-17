@@ -102,3 +102,57 @@
   color: var(--heading-color);
   font-family: var(--font-strict);
 }
+
+.pagination-controls {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+  .pagination-controls button {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    background: #77BB66;
+    color: var(--text-color);
+    cursor: pointer;
+  }
+
+    .pagination-controls button.active {
+      background: var(--header-bg);
+      color: var(--header-text);
+    }
+
+    .pagination-controls button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+  .pagination-container button {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #77BB66;
+    background-color: #ffffff;
+    color: #77BB66;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+    .pagination-container button:hover {
+      background-color: #e9f5e7;
+    }
+
+    .pagination-container button.active {
+      background-color: #77BB66;
+      color: #fff;
+      border-color: #77BB66;
+    }

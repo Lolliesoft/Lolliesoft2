@@ -1,5 +1,3 @@
-/* src/app/shared/header/header.component.css */
-
 /* =============================== */
 /* 1. Top navigation (.site-header) */
 /* =============================== */
@@ -24,24 +22,44 @@
   object-fit: contain;
 }
 
+/* Navigation Menu with taller height and separators */
 .nav-menu {
   list-style: none;
   display: flex;
-  gap: 1rem;
+  align-items: center;
   margin: 0;
   padding: 0;
-  /* Push subsequent icons/switch to the right */
-  margin-right: auto;
+  flex: 1;
+  justify-content: center;
+  height: 100%; /* fill the full header height */
 }
+
+  .nav-menu li {
+    position: relative;
+    height: 100%; /* match nav-menu height */
+    display: flex;
+    align-items: center;
+  }
+
+    /* Longer vertical separator before each item except the first */
+    .nav-menu li + li:before {
+      content: "";
+      position: absolute;
+      left: -1rem;
+      top: 0; /* start at top of menu */
+      height: 100%; /* span full menu height */
+      width: 1px;
+      background: var(--header-text);
+      opacity: 0.5;
+    }
 
   .nav-menu a {
     font-size: 15px;
     font-weight: bold;
     text-transform: uppercase;
     color: var(--header-text);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: inline-block;
+    padding: 0 1rem;
   }
 
     .nav-menu a:hover {
@@ -64,25 +82,24 @@
   margin: 0;
 }
 
-.dark-toggle {
-  background: none;
-  border: none;
-  font-size: 1.25rem;
-  cursor: pointer;
-  color: var(--header-text);
-}
-
 @media (max-width: 600px) {
   .site-header {
     flex-wrap: wrap;
+    justify-content: center;
   }
 
   .logo-link {
     margin-bottom: 0.5rem;
+    display: inline-block;
+  }
+
+  .nav-menu {
+    justify-content: center;
+    height: auto;
   }
 }
 
-/* Override site-header background */
+/* Override nav background on header */
 nav.site-header {
   background-color: #494158;
   color: #fff;
@@ -92,7 +109,6 @@ nav.site-header {
 /* 2. Header Layout 2: Social icons + New Post btn  */
 /* ================================================ */
 
-/* Outer second bar */
 #header-layout-2 {
   background-color: #77BB66;
   height: 36px;
@@ -169,15 +185,86 @@ nav.site-header {
       opacity: 0.75;
     }
 
+.nav-menu .subline {
+  display: block; /* force it onto its own line */
+  font-size: 0.75rem; /* smaller text */
+  font-weight: normal;
+  margin-top: 0.125rem;
+  line-height: 1;
+  text-transform: none; /* ← prevents it from uppercasing */
+  opacity: 0.8;
+  color: var(--header-text);
+}
+
 /* New‑Post button: absolute right gutter */
 #header-newpost {
   position: absolute;
   top: 50%;
-  right: 1.5rem;
+  right: 15rem; /* ↑ increased from 6rem to 8rem */
   transform: translateY(-50%);
 }
+
 
   #header-newpost .btn {
     font-size: 0.875rem;
     padding: 0.25rem 0.75rem;
   }
+
+/* Search container: absolute inside #header-holder-2 */
+#header-search {
+  position: absolute;
+  top: 50%;
+  right: 1.5rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+  /* Input styling */
+  #header-search input {
+    width: 150px; /* your preferred width */
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+  }
+
+
+
+
+#header-search .search-btn {
+  background-color: transparent;
+  border: none; /* remove the border */
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+  /* Also remove the default focus outline if any */
+  #header-search .search-btn:focus {
+    outline: none;
+  }
+
+#header-search input::placeholder {
+  font-style: italic;
+}
+
+  /* If your SVG itself is white, add a filter to invert it */
+  #header-search .search-btn img {
+    width: 24px;
+    height: 24px;
+    /* invert: */
+    filter: invert(0%); /* 0% = no invert; use invert(100%) if you need white→black */
+  }
+/* Style the search widget */
+.search-widget {
+  flex: 1;              /* stretch this to fill available space */
+  max-width: 300px;     /* optional: cap its width */
+}
+
+.search-widget input {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}

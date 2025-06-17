@@ -6,14 +6,55 @@
     <a class="logo-link" routerLink="/">
       <img src="/images/logo.png" alt="My Site Logo" class="logo-img" />
     </a>
-
-    <!-- Navigation links -->
     <ul class="nav-menu">
-      <li><a routerLink="/blog">HOME</a></li>
-      <li *ngIf="authService.isLoggedIn()">
-        <a routerLink="/admin/blog/new">NEW POST</a>
+      <li>
+        <a routerLink="/blog">
+          HOME
+          <span class="subline">Blog</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/portfolio">
+          PORTFOLIO
+          <span class="subline">Software</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/studio">
+          STUDIO
+          <span class="subline">Projects</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/podcast">
+          PODCAST
+          <span class="subline">Episodes</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/video">
+          VIDEO
+          <span class="subline">Clips</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/travel">
+          TRAVEL
+          <span class="subline">Vacation</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/contact">
+          CONTACT
+          <span class="subline">About</span>
+        </a>
       </li>
     </ul>
+
+    <!-- Notification icon -->
+    <a class="auth-icon" title="Notifications">
+      <img src="/images/notification.svg" alt="Notifications" />
+    </a>
 
     <!-- Login icon (only when NOT logged in) -->
     <a *ngIf="!authService.isLoggedIn()"
@@ -67,6 +108,19 @@
           Add Post +
         </a>
       </div>
+      <!-- Search box, pinned to the far right -->
+      <div id="header-search">
+    
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="searchPosts()"
+        placeholder="Search posts…"
+      />
+      <button class="search-btn" (click)="searchPosts()" title="Search">
+        <img src="/images/search.svg" alt="Search" />
+      </button>
     </div>
-  </div>
+    </div>
+    </div>
 </div>

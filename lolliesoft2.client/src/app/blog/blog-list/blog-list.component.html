@@ -4,9 +4,9 @@
     <div class="content-flex">
       <!-- Main blog list -->
       <div class="blog-list">
-        <div *ngFor="let post of blogList" class="blog-item">
+        <div *ngFor="let post of paginatedPosts" class="blog-item">
 
-          <!-- ✅ Edit/Delete Buttons (inside each blog item) -->
+          <!-- ✅ Edit/Delete Buttons -->
           <div class="post-controls" *ngIf="currentUserId === post.authorId">
             <button [routerLink]="['/admin/blog/edit', post.id]"
                     class="btn btn-sm btn-outline-secondary">
@@ -18,8 +18,8 @@
           </div>
 
           <!-- Featured image -->
-          <div class="blog-image" *ngIf="post.imagePath">
-            <img [src]="'https://localhost:44309' + post.imagePath" [alt]="post.title" />
+          <div class="blog-image" *ngIf="post.imageUrl">
+            <img [src]="post.imageUrl" [alt]="post.title" />
           </div>
 
           <!-- Title + link -->
@@ -37,8 +37,17 @@
         </div>
 
         <!-- Empty state -->
-        <div *ngIf="blogList.length === 0" class="no-posts">
+        <div *ngIf="paginatedPosts.length === 0" class="no-posts">
           No public posts available.
+        </div>
+
+        <!-- ✅ Centered Pagination -->
+        <div class="pagination-container" *ngIf="totalPages > 1">
+          <button *ngFor="let page of [].constructor(totalPages); let i = index"
+                  (click)="goToPage(i + 1)"
+                  [class.active]="currentPage === i + 1">
+            {{ i + 1 }}
+          </button>
         </div>
       </div>
 
@@ -46,8 +55,7 @@
       <aside class="sidebar">
         <!-- YouTube Widget -->
         <div class="widget youtube-widget">
-          <iframe width="100%"
-                  height="290"
+          <iframe width="100%" height="290"
                   src="https://www.youtube.com/embed/videoseries?list=UU3cYU4rhzX4ySLHQCMT_oog"
                   frameborder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -57,10 +65,7 @@
 
         <!-- SoundCloud Widget -->
         <div class="widget soundcloud-widget">
-          <iframe width="100%"
-                  height="163"
-                  scrolling="no"
-                  frameborder="no"
+          <iframe width="100%" height="163" scrolling="no" frameborder="no"
                   allow="autoplay"
                   src="https://w.soundcloud.com/player/?url=https://soundcloud.com/lollie-soft&color=%23ff5500&auto_play=false&hide_related=false&show_artwork=true">
           </iframe>
@@ -84,12 +89,15 @@
           </div>
         </div>
 
-
-
-        <!-- Newsletter Signup Widget (Mailchimp) -->
-        <div class="widget newsletter-widget">
-          <!-- … your existing Mailchimp embed here … -->
+        <!-- Search Widget -->
+        <div class="widget search-widget">
+          <h2>Search</h2>
+          <input type="text"
+                 placeholder="Search blog posts..."
+                 [(ngModel)]="searchQuery"
+                 (input)="searchPosts()" />
         </div>
+
 
         <!-- About Widget -->
         <div class="about-widget widget">
@@ -97,14 +105,10 @@
           <p>
             Lolliesoft features all original words, recording and production.
             The content covers a variety of topics from various projects to software
-            development to automotive repair and random thoughts.
+            and game development and random thoughts.
           </p>
         </div>
       </aside>
-      <!-- /.sidebar -->
     </div>
-    <!-- /.content-flex -->
   </div>
-  <!-- /#content-box -->
 </div>
-<!-- /.container -->

@@ -3,7 +3,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms'; // ✅ FormsModule added here
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -34,6 +34,7 @@ import { ThemeService } from './shared/theme.service';
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule, // ✅ Add it here
     AppRoutingModule,
 
     // ← Make the <editor> component available
