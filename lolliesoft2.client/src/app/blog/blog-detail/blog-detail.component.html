@@ -1,7 +1,7 @@
 <!-- src/app/blog/blog-detail/blog-detail.component.html -->
 <ng-container *ngIf="post; else loading">
   <div class="blog-detail">
-    <!-- move the edit button into its own wrapper -->
+    <!-- Edit button wrapper, now first in the DOM for absolute positioning -->
     <div *ngIf="currentUserId === post.authorId" class="edit-post">
       <button [routerLink]="['/admin/blog/edit', post.id]"
               class="btn btn-secondary">
@@ -20,6 +20,11 @@
 
     <p class="meta">
       <em>
+        <!-- NEW: show author if present -->
+        <span *ngIf="post.authorName" class="written-by">
+          Written by: <i>{{ post.authorName }}</i><br>
+        </span>
+
         Published: {{ post.created | date:'medium' }}
         <span *ngIf="post.updated">
           (Updated: {{ post.updated | date:'medium' }})

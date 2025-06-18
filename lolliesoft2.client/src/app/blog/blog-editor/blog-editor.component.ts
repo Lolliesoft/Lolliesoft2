@@ -1,8 +1,7 @@
-// src/app/blog/blog-editor/blog-editor.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { BlogService } from '../../services/blog.service';
 import { BlogPost } from '../blog-post.model';
 
@@ -12,49 +11,18 @@ import { BlogPost } from '../blog-post.model';
   styleUrls: ['./blog-editor.component.css']
 })
 export class BlogEditorComponent implements OnInit {
-  public blogForm!: FormGroup;
-
-  public editorInit: any = {
-    license_key: 'gpl',
-    base_url: '/assets/tinymce',
-    suffix: '.min',
-    height: 300,
-    plugins: [
-      'advlist', 'autolink', 'lists', 'link', 'image',
-      'charmap', 'preview', 'anchor', 'searchreplace',
-      'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'paste',
-      'help', 'wordcount'
-    ],
-    toolbar: [
-      'undo redo',
-      'formatselect',
-      'bold italic backcolor',
-      'alignleft aligncenter alignright alignjustify',
-      'bullist numlist outdent indent',
-      'removeformat',
-      'image',
-      'help'
-    ].join(' | '),
-    images_upload_handler: (blobInfo: any, progress: (pct: number) => void) => {
-      return new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onprogress = evt => {
-          if (evt.lengthComputable) {
-            progress(Math.round((evt.loaded / evt.total) * 100));
-          }
-        };
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = () => reject('Failed to read file');
-        reader.readAsDataURL(blobInfo.blob());
-      });
-    }
-  };
-
-  postId?: number;
+  blogForm!: FormGroup;
   isEdit = false;
+  postId = 0;
   loading = false;
-  errorMessage?: string;
+  errorMessage = '';
+
+  editorInit = {
+    menubar: false,
+    plugins: ['link', 'lists', 'image', 'fullscreen'],
+    toolbar: 'undo redo | bold italic | bullist numlist | link image | fullscreen',
+    height: 300
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -64,6 +32,10 @@ export class BlogEditorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    this.isEdit = !!idParam;
+    this.postId = idParam ? +idParam : 0;
+
     this.blogForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(200)]],
       content: ['', Validators.required],
@@ -71,74 +43,59 @@ export class BlogEditorComponent implements OnInit {
       image: [null]
     });
 
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.isEdit = true;
-      this.postId = +idParam;
-      this.blogService.get(this.postId).subscribe({
-        next: post => {
+    if (this.isEdit) {
+      this.blogService.getById(this.postId).subscribe(
+        (post: BlogPost) => {
           this.blogForm.patchValue({
             title: post.title,
             content: post.content,
             isPrivate: post.isPrivate
           });
         },
-        error: err => {
-          console.error('Failed to load post', err);
-          this.errorMessage = 'Failed to load post.';
-        }
-      });
+        (err: any) => console.error('Failed to load post for editing', err)
+      );
     }
   }
 
   onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.blogForm.patchValue({ image: input.files[0] });
-    }
+    const file = (event.target as HTMLInputElement).files?.[0] ?? null;
+    this.blogForm.get('image')!.setValue(file);
   }
 
   onSubmit(): void {
     if (this.blogForm.invalid) {
       return;
     }
+    this.loading = true;
+    this.errorMessage = '';
 
     const formData = new FormData();
-    formData.append('Title', this.blogForm.value.title);
-    formData.append('Content', this.blogForm.value.content);
-    formData.append('IsPrivate', this.blogForm.value.isPrivate.toString());
-    if (this.blogForm.value.image) {
-      formData.append('Image', this.blogForm.value.image);
+    formData.append('title', this.blogForm.get('title')!.value);
+    formData.append('content', this.blogForm.get('content')!.value);
+    formData.append('isPrivate', this.blogForm.get('isPrivate')!.value);
+    const img = this.blogForm.get('image')!.value;
+    if (img) {
+      formData.append('image', img);
     }
 
-    this.loading = true;
+    // Force all branches into a single Observable<any>
+    const request$: Observable<any> = this.isEdit
+      ? this.blogService.update(this.postId, formData)
+      : this.blogService.create(formData);
 
-    if (this.isEdit && this.postId) {
-      // —— UPDATE (void) —— 
-      this.blogService.update(this.postId, formData).subscribe({
-        next: () => {
-          this.loading = false;
-          this.router.navigate(['/blog', this.postId]);
-        },
-        error: (err) => {
-          console.error('Update failed', err);
-          this.errorMessage = 'Update failed. Please try again.';
-          this.loading = false;
-        }
-      });
-    } else {
-      // —— CREATE (BlogPost) ——
-      this.blogService.create(formData).subscribe({
-        next: (newPost: BlogPost) => {
-          this.loading = false;
-          this.router.navigate(['/blog', newPost.id]);
-        },
-        error: (err) => {
-          console.error('Create failed', err);
-          this.errorMessage = 'Create failed. Please try again.';
-          this.loading = false;
-        }
-      });
-    }
+    request$.subscribe(
+      (res: any) => {
+        // create returns the new BlogPost, update returns void
+        const newId = this.isEdit
+          ? this.postId
+          : (res as BlogPost).id;
+        this.router.navigate(['/blog', newId]);
+      },
+      (err: any) => {
+        console.error('Save failed', err);
+        this.errorMessage = 'Save failed. Please try again.';
+        this.loading = false;
+      }
+    );
   }
 }

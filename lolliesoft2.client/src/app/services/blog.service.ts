@@ -22,7 +22,7 @@ export class BlogService {
   }
 
   /** Get a single post by id */
-  get(id: number): Observable<BlogPost> {
+  getById(id: number): Observable<BlogPost> {
     return this.http.get<BlogPost>(
       `${this.apiUrl}/${id}`,
       { withCredentials: true }
@@ -49,21 +49,17 @@ export class BlogService {
 
   /** Delete a post */
   delete(id: number): Observable<void> {
-    // 1) If your backend relies on cookie-based auth, `withCredentials: true` is already set.
-    //    Otherwise, if you’re using JWT, attach the Authorization header:
     const token = this.auth.getToken();
     let headers = new HttpHeaders();
 
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
-      // No need for withCredentials in JWT scenario, so omit it:
       return this.http.delete<void>(
         `${this.apiUrl}/${id}`,
         { headers }
       );
     }
 
-    // Fall back to cookie-based delete if no token is present
     return this.http.delete<void>(
       `${this.apiUrl}/${id}`,
       { withCredentials: true }

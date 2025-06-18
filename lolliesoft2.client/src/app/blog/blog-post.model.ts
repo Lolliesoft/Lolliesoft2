@@ -12,4 +12,5 @@ export interface BlogPost {
   /** Who wrote this post */
   authorId: string;
   imageUrl?: string; // ✅ Add this line (optional with `?`)
+  authorName: string;
 }

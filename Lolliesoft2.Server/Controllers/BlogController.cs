@@ -36,8 +36,21 @@ namespace Lolliesoft2.Server.Controllers
         public async Task<IActionResult> GetAll()
         {
             var posts = await _db.BlogPosts
+                .Include(b => b.Author)
                 .Where(b => !b.IsPrivate)
                 .OrderByDescending(b => b.Created)
+                .Select(b => new BlogReadDto
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Content = b.Content,
+                    ImagePath = b.ImagePath,
+                    IsPrivate = b.IsPrivate,
+                    Created = b.Created,
+                    Updated = b.Updated,
+                    AuthorId = b.AuthorId,
+                    AuthorName = b.Author.UserName
+                })
                 .ToListAsync();
 
             return Ok(posts);
@@ -47,9 +60,26 @@ namespace Lolliesoft2.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var post = await _db.BlogPosts.FindAsync(id);
-            if (post == null || post.IsPrivate)
+            var post = await _db.BlogPosts
+                .Include(b => b.Author)
+                .Where(b => b.Id == id && !b.IsPrivate)
+                .Select(b => new BlogReadDto
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Content = b.Content,
+                    ImagePath = b.ImagePath,
+                    IsPrivate = b.IsPrivate,
+                    Created = b.Created,
+                    Updated = b.Updated,
+                    AuthorId = b.AuthorId,
+                    AuthorName = b.Author.UserName
+                })
+                .FirstOrDefaultAsync();
+
+            if (post == null)
                 return NotFound(new { error = "Blog post not found." });
+
             return Ok(post);
         }
 
@@ -61,7 +91,6 @@ namespace Lolliesoft2.Server.Controllers
             if (!ModelState.IsValid)
                 return ValidationProblem(ModelState);
 
-            // Extract the user’s ID from the JWT:
             var authorId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                            ?? User.FindFirstValue("sub")
                            ?? throw new UnauthorizedAccessException();
@@ -72,10 +101,10 @@ namespace Lolliesoft2.Server.Controllers
                 Content = dto.Content,
                 IsPrivate = dto.IsPrivate,
                 Created = DateTime.UtcNow,
-                AuthorId = authorId    // ← set author
+                AuthorId = authorId
             };
 
-            // Handle file upload (unchanged)…
+            // file‐upload handling (unchanged)…
             if (dto.Image != null && dto.Image.Length > 0)
             {
                 var ext = Path.GetExtension(dto.Image.FileName).ToLowerInvariant();
@@ -106,7 +135,21 @@ namespace Lolliesoft2.Server.Controllers
             _db.BlogPosts.Add(post);
             await _db.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Get), new { id = post.Id }, post);
+            // return the read‐DTO
+            var resultDto = new BlogReadDto
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Content = post.Content,
+                ImagePath = post.ImagePath,
+                IsPrivate = post.IsPrivate,
+                Created = post.Created,
+                Updated = post.Updated,
+                AuthorId = post.AuthorId,
+                AuthorName = User.Identity?.Name ?? ""
+            };
+
+            return CreatedAtAction(nameof(Get), new { id = post.Id }, resultDto);
         }
 
         // PUT api/blog/5
@@ -121,7 +164,6 @@ namespace Lolliesoft2.Server.Controllers
             if (post == null)
                 return NotFound(new { error = "Blog post not found." });
 
-            // Make sure only the author can update:
             var authorId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                         ?? User.FindFirstValue("sub");
             if (post.AuthorId != authorId)
@@ -132,9 +174,10 @@ namespace Lolliesoft2.Server.Controllers
             post.IsPrivate = dto.IsPrivate;
             post.Updated = DateTime.UtcNow;
 
-            // Handle optional new image (same as Create)…
+            // optional new image handling …
             if (dto.Image != null && dto.Image.Length > 0)
             {
+                // same file‐upload logic as above…
                 var ext = Path.GetExtension(dto.Image.FileName).ToLowerInvariant();
                 if (!PERMITTED_EXTENSIONS.Contains(ext))
                     return BadRequest(new { error = "Only JPG, JPEG, PNG, or GIF images are allowed." });
@@ -173,7 +216,6 @@ namespace Lolliesoft2.Server.Controllers
             if (post == null)
                 return NotFound(new { error = "Blog post not found." });
 
-            // Only the author can delete
             var authorId = User.FindFirstValue(ClaimTypes.NameIdentifier)
                         ?? User.FindFirstValue("sub");
             if (post.AuthorId != authorId)
