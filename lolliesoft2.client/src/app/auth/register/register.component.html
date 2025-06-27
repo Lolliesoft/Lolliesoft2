@@ -1,0 +1,53 @@
+<!-- src/app/auth/register/register.component.html -->
+<div class="register-container">
+  <h2>Register</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="userName">Username</label>
+      <input id="userName" formControlName="userName" class="form-control" />
+      <div class="invalid-feedback"
+           *ngIf="form.get('userName')?.touched && form.get('userName')?.invalid">
+        Username is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" formControlName="email" class="form-control" />
+      <div class="invalid-feedback"
+           *ngIf="form.get('email')?.touched && form.get('email')?.errors?.['required']">
+        Email is required.
+      </div>
+      <div class="invalid-feedback"
+           *ngIf="form.get('email')?.touched && form.get('email')?.errors?.['email']">
+        Must be a valid email address.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password"
+             type="password"
+             formControlName="password"
+             class="form-control" />
+      <div class="invalid-feedback"
+           *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['required']">
+        Password is required.
+      </div>
+      <div class="invalid-feedback"
+           *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['minlength']">
+        Password must be at least 6 characters.
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit"
+            class="btn btn-primary"
+            [disabled]="form.invalid || loading">
+      {{ loading ? 'Registering…' : 'Register' }}
+    </button>
+  </form>
+</div>

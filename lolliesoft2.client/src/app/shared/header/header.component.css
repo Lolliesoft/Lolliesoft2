@@ -268,3 +268,16 @@ nav.site-header {
   border-radius: 4px;
   font-size: 0.9rem;
 }
+
+/* style the “Register” text link to sit inline with the icons */
+.register-link {
+  font-size: 0.9rem;
+  color: var(--header-text);
+  line-height: 24px;
+  margin-right: 0.5rem;
+  text-decoration: none;
+}
+
+  .register-link:hover {
+    color: var(--accent);
+  }

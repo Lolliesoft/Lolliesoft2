@@ -15,10 +15,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BlogDbContext>(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("BlogDb"))
 );
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opts => {
+    // Password policy
     opts.Password.RequireDigit = false;
     opts.Password.RequiredLength = 6;
     opts.Password.RequireNonAlphanumeric = false;
+
+    // Allow spaces (and - . _ @ +) in usernames
+    opts.User.AllowedUserNameCharacters =
+        "abcdefghijklmnopqrstuvwxyz" +
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+        "0123456789" +
+        " -._@+";
 })
 .AddEntityFrameworkStores<BlogDbContext>()
 .AddDefaultTokenProviders();
@@ -67,8 +76,6 @@ builder.Services.AddSwaggerGen(c => {
         Title = "Lolliesoft2 API",
         Version = "v1"
     });
-
-    // Define the Bearer auth scheme
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Enter: `Bearer {your token}`",
@@ -77,8 +84,6 @@ builder.Services.AddSwaggerGen(c => {
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-
-    // Require Bearer for all endpoints
     c.AddSecurityRequirement(new OpenApiSecurityRequirement {
         {
             new OpenApiSecurityScheme {
@@ -114,23 +119,20 @@ app.UseCors("AllowAngular");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-// Swagger UI (only in Development)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c => {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lolliesoft2 API V1");
-        c.RoutePrefix = "swagger";  // UI at /swagger
+        c.RoutePrefix = "swagger";
     });
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();  // must come before UseAuthorization
 app.UseAuthorization();
 
 app.MapControllers();
 app.MapFallbackToFile("/index.html");
-
 
 app.Run();
