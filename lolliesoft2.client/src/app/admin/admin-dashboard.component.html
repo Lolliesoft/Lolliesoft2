@@ -1,0 +1,31 @@
+<!-- src/app/admin/admin-dashboard.component.html -->
+<table class="table">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Reader</th>
+      <th>Author</th>
+      <th>Admin</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let u of users">
+      <td>{{ u.userName }}</td>
+      <td>
+        <input type="checkbox"
+               [checked]="u.roles.includes('Reader')"
+               (change)="toggleRole(u.id,'Reader',$event.target.checked)">
+      </td>
+      <td>
+        <input type="checkbox"
+               [checked]="u.roles.includes('Author')"
+               (change)="toggleRole(u.id,'Author',$event.target.checked)">
+      </td>
+      <td>
+        <input type="checkbox"
+               [checked]="u.roles.includes('Admin')"
+               (change)="toggleRole(u.id,'Admin',$event.target.checked)">
+      </td>
+    </tr>
+  </tbody>
+</table>

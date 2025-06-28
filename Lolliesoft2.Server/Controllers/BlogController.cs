@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -21,7 +20,6 @@ namespace Lolliesoft2.Server.Controllers
     {
         private readonly BlogDbContext _db;
         private readonly IWebHostEnvironment _env;
-
         private static readonly string[] PERMITTED_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif" };
         private const long MAX_FILE_SIZE = 15 * 1024 * 1024; // 15 MB
 
@@ -83,8 +81,8 @@ namespace Lolliesoft2.Server.Controllers
             return Ok(post);
         }
 
-        // POST api/blog
-        [Authorize]
+        // Only Authors and Admins can create posts
+        [Authorize(Roles = "Author,Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] BlogCreateDto dto)
         {
@@ -92,7 +90,6 @@ namespace Lolliesoft2.Server.Controllers
                 return ValidationProblem(ModelState);
 
             var authorId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                           ?? User.FindFirstValue("sub")
                            ?? throw new UnauthorizedAccessException();
 
             var post = new BlogPost
@@ -135,7 +132,6 @@ namespace Lolliesoft2.Server.Controllers
             _db.BlogPosts.Add(post);
             await _db.SaveChangesAsync();
 
-            // return the read‐DTO
             var resultDto = new BlogReadDto
             {
                 Id = post.Id,
@@ -152,8 +148,8 @@ namespace Lolliesoft2.Server.Controllers
             return CreatedAtAction(nameof(Get), new { id = post.Id }, resultDto);
         }
 
-        // PUT api/blog/5
-        [Authorize]
+        // Only Authors and Admins can update posts
+        [Authorize(Roles = "Author,Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] BlogUpdateDto dto)
         {
@@ -164,8 +160,7 @@ namespace Lolliesoft2.Server.Controllers
             if (post == null)
                 return NotFound(new { error = "Blog post not found." });
 
-            var authorId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                        ?? User.FindFirstValue("sub");
+            var authorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (post.AuthorId != authorId)
                 return Forbid();
 
@@ -174,10 +169,9 @@ namespace Lolliesoft2.Server.Controllers
             post.IsPrivate = dto.IsPrivate;
             post.Updated = DateTime.UtcNow;
 
-            // optional new image handling …
+            // optional new image handling…
             if (dto.Image != null && dto.Image.Length > 0)
             {
-                // same file‐upload logic as above…
                 var ext = Path.GetExtension(dto.Image.FileName).ToLowerInvariant();
                 if (!PERMITTED_EXTENSIONS.Contains(ext))
                     return BadRequest(new { error = "Only JPG, JPEG, PNG, or GIF images are allowed." });
@@ -207,8 +201,8 @@ namespace Lolliesoft2.Server.Controllers
             return NoContent();
         }
 
-        // DELETE api/blog/5
-        [Authorize]
+        // Only Authors and Admins can delete posts
+        [Authorize(Roles = "Author,Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -216,8 +210,7 @@ namespace Lolliesoft2.Server.Controllers
             if (post == null)
                 return NotFound(new { error = "Blog post not found." });
 
-            var authorId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                        ?? User.FindFirstValue("sub");
+            var authorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (post.AuthorId != authorId)
                 return Forbid();
 

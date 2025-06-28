@@ -1,16 +1,18 @@
 ﻿// Controllers/AuthController.cs
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Lolliesoft2.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.ComponentModel.DataAnnotations;
 
 namespace Lolliesoft2.Server.Controllers
 {
@@ -50,8 +52,13 @@ namespace Lolliesoft2.Server.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            // Issue JWT immediately so the client is "logged in"
-            var token = GenerateJwtToken(user);
+            // assign default "Reader" role
+            await _users.AddToRoleAsync(user, "Reader");
+
+            // fetch roles and issue JWT immediately
+            var roles = await _users.GetRolesAsync(user);
+            var token = GenerateJwtToken(user, roles);
+
             return Ok(new { token });
         }
 
@@ -71,19 +78,44 @@ namespace Lolliesoft2.Server.Controllers
             if (!signInRes.Succeeded)
                 return Unauthorized(new { error = "Invalid credentials." });
 
-            var token = GenerateJwtToken(user);
+            // fetch roles and issue JWT
+            var roles = await _users.GetRolesAsync(user);
+            var token = GenerateJwtToken(user, roles);
+
             return Ok(new { token });
         }
 
-        // Shared JWT generation
-        private string GenerateJwtToken(ApplicationUser user)
+        // GET api/auth/me
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> Me()
         {
-            var claims = new[]
+            var user = await _users.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var roles = await _users.GetRolesAsync(user);
+            return Ok(new
             {
-                new Claim(JwtRegisteredClaimNames.Sub,         user.Id),
-                new Claim(JwtRegisteredClaimNames.UniqueName,  user.UserName!),
-                new Claim(JwtRegisteredClaimNames.Email,       user.Email!)
-            };
+                id = user.Id,
+                name = user.UserName,
+                email = user.Email,
+                roles
+            });
+        }
+
+        // Shared JWT generation, now accepts roles
+        private string GenerateJwtToken(ApplicationUser user, IEnumerable<string> roles)
+        {
+            var claims = new List<Claim>
+        {
+            // very important: emit NameIdentifier so User.FindFirstValue(ClaimTypes.NameIdentifier) works
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email!)
+        };
+            // emit one "role" claim per role:
+            claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

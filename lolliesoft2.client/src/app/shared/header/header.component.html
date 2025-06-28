@@ -75,8 +75,11 @@
            href="https://youtube.com/YourProfile" target="_blank"></a>
       </div>
 
-      <!-- New Post button (right side) -->
-      <div id="header-newpost" *ngIf="authService.isLoggedIn()">
+      <!-- New Post button (only for Authors or Admins) -->
+      <div id="header-newpost"
+           *ngIf="authService.isLoggedIn()
+                  && ( authService.getCurrentUserRoles().includes('Author')
+                     || authService.getCurrentUserRoles().includes('Admin') )">
         <a routerLink="/admin/blog/new" class="btn btn-sm btn-primary">
           Add Post +
         </a>

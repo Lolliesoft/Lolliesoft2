@@ -1,3 +1,4 @@
+// src/app/services/blog.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -13,11 +14,22 @@ export class BlogService {
     private auth: AuthService
   ) { }
 
+  /** Build either a Bearer header or cookie option */
+  private authOptions() {
+    const token = this.auth.getToken();
+    if (token) {
+      return {
+        headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)
+      };
+    }
+    return { withCredentials: true };
+  }
+
   /** Get all public posts */
   getAll(): Observable<BlogPost[]> {
     return this.http.get<BlogPost[]>(
       this.apiUrl,
-      { withCredentials: true }
+      this.authOptions()
     );
   }
 
@@ -25,7 +37,7 @@ export class BlogService {
   getById(id: number): Observable<BlogPost> {
     return this.http.get<BlogPost>(
       `${this.apiUrl}/${id}`,
-      { withCredentials: true }
+      this.authOptions()
     );
   }
 
@@ -34,7 +46,7 @@ export class BlogService {
     return this.http.post<BlogPost>(
       this.apiUrl,
       form,
-      { withCredentials: true }
+      this.authOptions()
     );
   }
 
@@ -43,26 +55,15 @@ export class BlogService {
     return this.http.put<void>(
       `${this.apiUrl}/${id}`,
       form,
-      { withCredentials: true }
+      this.authOptions()
     );
   }
 
   /** Delete a post */
   delete(id: number): Observable<void> {
-    const token = this.auth.getToken();
-    let headers = new HttpHeaders();
-
-    if (token) {
-      headers = headers.set('Authorization', `Bearer ${token}`);
-      return this.http.delete<void>(
-        `${this.apiUrl}/${id}`,
-        { headers }
-      );
-    }
-
     return this.http.delete<void>(
       `${this.apiUrl}/${id}`,
-      { withCredentials: true }
+      this.authOptions()
     );
   }
 }

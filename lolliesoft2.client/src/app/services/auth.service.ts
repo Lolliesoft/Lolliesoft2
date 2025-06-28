@@ -11,100 +11,143 @@ interface AuthResponse {
 
 interface JwtPayload {
   sub: string;
-  unique_name?: string;
-  email?: string;
-  exp: number;
+  roles?: string[];
+  role?: string | string[];
+  [claim: string]: any;
+}
+
+interface MeResponse {
+  id: string;
+  name: string;
+  email: string;
+  roles: string[];
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly apiUrl = '/api/auth';
   private readonly tokenKey = 'authToken';
-  private userIdSubject = new BehaviorSubject<string | null>(this.decodeUserId());
+
+  // userId
+  private userIdSubject = new BehaviorSubject<string | null>(this.decodeSub());
   public currentUserId$ = this.userIdSubject.asObservable();
+
+  // roles
+  private rolesSubject = new BehaviorSubject<string[]>(this.decodeRoles());
+  public currentUserRoles$ = this.rolesSubject.asObservable();
 
   constructor(
     private http: HttpClient,
     private router: Router
   ) { }
 
-  /** Register a new user (now includes userName) and store token */
+  /** Register + store token */
   register(userName: string, email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(
-      `${this.apiUrl}/register`,
-      { userName, email, password }
-    ).pipe(
-      tap(res => this.setToken(res.token))
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/register`, { userName, email, password })
+      .pipe(tap(res => this.setToken(res.token)));
   }
 
-  /** Login and store token */
+  /** Login + store token */
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(
-      `${this.apiUrl}/login`,
-      { email, password }
-    ).pipe(
-      tap(res => this.setToken(res.token))
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
+      .pipe(tap(res => this.setToken(res.token)));
   }
 
-  /** Remove token and redirect home */
+  /** Fetch current user info (including roles) */
+  me(): Observable<MeResponse> {
+    return this.http
+      .get<MeResponse>(`${this.apiUrl}/me`, { headers: this.authHeaders() })
+      .pipe(
+        tap(res => {
+          this.userIdSubject.next(res.id);
+          this.rolesSubject.next(res.roles);
+        })
+      );
+  }
+
+  /** Log out and clear everything */
   logout(): void {
     this.clearToken();
     this.router.navigate(['/']);
   }
 
-  /** True if we have a token */
+  /** True if a token is present */
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
 
-  /** Raw JWT from localStorage */
+  /** Raw JWT */
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
 
-  /** HTTP headers with Bearer token */
+  /** Headers carrying the Bearer token */
   authHeaders(): HttpHeaders {
-    const token = this.getToken();
-    return token
-      ? new HttpHeaders().set('Authorization', `Bearer ${token}`)
+    const t = this.getToken();
+    return t
+      ? new HttpHeaders().set('Authorization', `Bearer ${t}`)
       : new HttpHeaders();
   }
 
-  /** Manually set & broadcast a new token */
-  setToken(jwt: string): void {
+  /** Persist token + update subjects */
+  public setToken(jwt: string): void {
     localStorage.setItem(this.tokenKey, jwt);
-    this.userIdSubject.next(this.decodeUserId());
+    this.userIdSubject.next(this.decodeSub());
+    this.rolesSubject.next(this.decodeRoles());
   }
 
-  /** Clear stored token & broadcast null */
-  clearToken(): void {
+  /** Clear token + subjects */
+  public clearToken(): void {
     localStorage.removeItem(this.tokenKey);
     this.userIdSubject.next(null);
+    this.rolesSubject.next([]);
   }
 
-  /** Current user ID parsed from JWT `sub` claim */
-  getCurrentUserId(): string | null {
-    return this.decodeUserId();
+  /** Synchronous helper to read current roles */
+  public getCurrentUserRoles(): string[] {
+    return this.rolesSubject.value;
   }
 
-  /** Decode JWT payload to extract `sub` */
-  private decodeUserId(): string | null {
-    const token = this.getToken();
-    if (!token) return null;
+  /** Helper to read current user ID */
+  public getCurrentUserId(): string | null {
+    return this.decodeSub();
+  }
 
+  /** Decode the `sub` claim from JWT */
+  private decodeSub(): string | null {
+    const t = this.getToken();
+    if (!t) return null;
     try {
-      const parts = token.split('.');
-      if (parts.length !== 3) return null;
-      const b64 = parts[1]
-        .replace(/-/g, '+')
-        .replace(/_/g, '/')
-        .padEnd(parts[1].length + (4 - parts[1].length % 4) % 4, '=');
-      const payload = JSON.parse(atob(b64)) as JwtPayload;
-      return payload.sub ?? null;
+      const payload = JSON.parse(atob(t.split('.')[1])) as JwtPayload;
+      return payload.sub;
     } catch {
       return null;
+    }
+  }
+
+  /** Decode `role`/`roles` or any URI ending `/role` into an array */
+  private decodeRoles(): string[] {
+    const t = this.getToken();
+    if (!t) return [];
+    try {
+      const payload = JSON.parse(atob(t.split('.')[1])) as JwtPayload;
+
+      // 1. Standard "roles" array
+      let raw = payload.roles
+        // 2. Or a single/array "role"
+        ?? payload.role
+        // 3. Or any claim key that ends with "/role"
+        ?? Object.keys(payload)
+          .filter(k => k.toLowerCase().endsWith('/role'))
+          .map(k => payload[k])
+          .flat();
+
+      if (!raw) return [];
+      return Array.isArray(raw) ? raw : [raw];
+    } catch {
+      return [];
     }
   }
 }

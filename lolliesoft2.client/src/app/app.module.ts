@@ -27,6 +27,7 @@ import { BlogEditorComponent } from './blog/blog-editor/blog-editor.component';
 // Shared
 import { HeaderComponent } from './shared/header/header.component';
 import { ThemeService } from './shared/theme.service';
+import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { ThemeService } from './shared/theme.service';
     BlogEditorComponent,
 
     // layout
-    HeaderComponent
+    HeaderComponent,
+      AdminDashboardComponent
   ],
   imports: [
     BrowserModule,

@@ -18,11 +18,19 @@ export class HeaderComponent implements OnInit {
     public theme: ThemeService,
     public authService: AuthService,
     private router: Router
-  ) { }
+  ) {
+    // Expose for console debugging:
+    (window as any).authService = this.authService;
+  }
 
   ngOnInit() {
     this.theme.initTheme();
+    // Log current roles on init:
+    console.log('CurrentUserRoles:', this.authService.getCurrentUserRoles());
+    // Also expose roles array directly:
+    (window as any).currentUserRoles = this.authService.getCurrentUserRoles();
   }
+
 
   toggleDark(): void {
     this.theme.toggle();
